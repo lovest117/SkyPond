@@ -5,7 +5,7 @@
 <p align="center">一方碧潭作桌面：锦鲤悠游、云影掠过、雨打荷叶，轻点一下就来抢食。<br>
 macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运行。</p>
 
-<p align="center"><a href="https://github.com/moli-xia/fishwallpaper/releases/latest"><b>⬇ 下载最新版本</b></a></p>
+<p align="center"><a href="https://github.com/lovest117/fishwallpaper/releases/latest"><b>⬇ 下载最新版本</b></a></p>
 
 ![macOS 桌面上的晴日池塘](docs/screenshots/macos-sunny.jpg)
 
@@ -25,7 +25,7 @@ macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engin
 
 ## 下载
 
-在 [Releases](https://github.com/moli-xia/fishwallpaper/releases/latest) 下载对应平台的安装包：
+在 [Releases](https://github.com/lovest117/fishwallpaper/releases/latest) 下载对应平台的安装包：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |
