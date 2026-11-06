@@ -1,11 +1,11 @@
-<p align="center"><img src="docs/screenshots/icon.png" width="128" alt="碧池观鱼图标"></p>
+<p align="center"><img src="docs/screenshots/icon.png" width="128" alt="半亩方塘图标"></p>
 
-<h1 align="center">碧池观鱼</h1>
+<h1 align="center">半亩方塘</h1>
 
-<p align="center">一方碧潭作桌面：锦鲤悠游、云影掠过、雨打荷叶，轻点一下就来抢食。<br>
+<p align="center">半亩方塘作桌面：锦鲤悠游、云影掠过、雨打荷叶，轻点一下就来抢食。<br>
 macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运行。</p>
 
-<p align="center"><a href="https://github.com/moli-xia/fishwallpaper/releases/latest"><b>⬇ 下载最新版本</b></a></p>
+<p align="center"><a href="https://github.com/lovest117/fishwallpaper/releases/latest"><b>⬇ 下载最新版本</b></a></p>
 
 ![macOS 桌面上的晴日池塘](docs/screenshots/macos-sunny.jpg)
 
@@ -25,18 +25,18 @@ macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engin
 
 ## 下载
 
-在 [Releases](https://github.com/moli-xia/fishwallpaper/releases/latest) 下载对应平台的安装包：
+在 [Releases](https://github.com/lovest117/fishwallpaper/releases/latest) 下载对应平台的安装包：
 
 | 平台 | 文件 | 说明 |
 | --- | --- | --- |
-| macOS 12+（Apple 芯片与 Intel） | `BichiKoiPond-<版本>-macOS.dmg` | 打开后拖进「应用程序」，双击运行，池塘即成为每块屏幕的桌面背景；菜单栏 🐟 控制。首次打开请右键 →「打开」（未经 Apple 公证） |
-| Windows 10 / 11 | `BichiKoiPond-<版本>-Windows.zip` | 解压整个文件夹，运行 `BichiPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
-| Android 7.0+ | `BichiKoiPond-<版本>-Android.apk` | 安装后第一次打开即进入动态壁纸预览，点「设置壁纸」 |
-| 浏览器 / Wallpaper Engine | `BichiKoiPond-<版本>-Web.zip` | 解压后打开 `index.html`，或在 Wallpaper Engine 中导入该文件夹 |
+| macOS 12+（Apple 芯片与 Intel） | `SkyPond-<版本>-macOS.dmg` | 打开后拖进「应用程序」，双击运行，池塘即成为每块屏幕的桌面背景；菜单栏 🐟 控制。首次打开请右键 →「打开」（未经 Apple 公证） |
+| Windows 10 / 11 | `SkyPond-<版本>-Windows.zip` | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
+| Android 7.0+ | `SkyPond-<版本>-Android.apk` | 安装后第一次打开即进入动态壁纸预览，点「设置壁纸」 |
+| 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip` | 解压后打开 `index.html`，或在 Wallpaper Engine 中导入该文件夹 |
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
-> 本项目根据一段[抖音视频](https://www.douyin.com/video/7688973095907232741)独立实现，非原作者官方作品；画面、代码与声音均为独立制作（见文末「素材与服务」）。
+> 本作品根据开源项目「碧池观鱼」二次创作，独立复刻，非原作者官方版本；画面、代码与声音均为独立制作（见文末「素材与服务」）。
 
 ## 本地运行与开发
 
@@ -169,15 +169,15 @@ gh auth login              # 首次使用时登录
 ./scripts/build-windows.sh
 ```
 
-生成 `dist/碧池观鱼-Windows-<版本>.zip`（约 2MB，当前 1.2.1）。需要 .NET SDK 8 或更高版本（可在 macOS / Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
+生成 `dist/SkyPond-Windows-<版本>.zip`（约 2MB，当前 1.1.0）。需要 .NET SDK 8 或更高版本（可在 macOS / Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
 
-使用：解压整个文件夹，双击 `BichiPond.exe`。池塘铺满每块屏幕的桌面背景，位于桌面图标之下（兼容 Windows 11 24H2 起改变的桌面层结构），不影响正常使用桌面。
+使用：解压整个文件夹，双击 `SkyPond.exe`。池塘铺满每块屏幕的桌面背景，位于桌面图标之下（兼容 Windows 11 24H2 起改变的桌面层结构），不影响正常使用桌面。
 
 - 在桌面空白处轻点：锦鲤游过来抢食（程序只“旁听”鼠标，不拦截任何点击）。壁纸上不显示按钮。
 - 通知区域的锦鲤图标（右键）：打开交互窗口（投喂、起名、天气、声音、设置）、切换天气与月下观鱼、暂停壁纸动画、重载、开机时启动、退出；双击图标打开交互窗口。交互窗口里的改动即时同步到桌面壁纸。
 - 某块屏幕被最大化或全屏的窗口挡住、或锁屏时，这块屏幕的池塘停止绘制。
 - 资源管理器重启或显示器变化后自动重建壁纸；退出后桌面恢复为原来的系统壁纸。
-- 数据和出错日志保存在 `%LOCALAPPDATA%\BichiPond`。
+- 数据和出错日志保存在 `%LOCALAPPDATA%\SkyPond`。
 
 验证范围：可执行文件、清单（按显示器 DPI 感知）、图标、WebView2 加载器（x86 / x64 / ARM64）均已检查，编译时警告视为错误且零警告；这台 Mac 上没有 Windows 环境，尚未在 Windows 上实际运行。首次运行时 Windows 可能提示“已保护你的电脑”（未签名程序），点“更多信息 → 仍要运行”。
 

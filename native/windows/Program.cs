@@ -1,20 +1,20 @@
-// 碧池观鱼 · Windows entry point: one copy at a time, then the pond takes the desktop.
+// 半亩方塘 · Windows entry point: one copy at a time, then the pond takes the desktop.
 using System;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace BichiPond
+namespace SkyPond
 {
     internal static class Program
     {
         [STAThread]
         private static void Main()
         {
-            using (var single = new Mutex(true, @"Local\BichiKoiPond", out bool first))
+            using (var single = new Mutex(true, @"Local\SkyPond", out bool first))
             {
                 if (!first)
                 {
-                    MessageBox.Show("碧池观鱼已经在运行，可在任务栏通知区域的锦鲤图标中打开或退出。", "碧池观鱼", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("半亩方塘已经在运行，可在任务栏通知区域的锦鲤图标中打开或退出。", "半亩方塘", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 Application.EnableVisualStyles();

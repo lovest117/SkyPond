@@ -1,4 +1,4 @@
-// 碧池观鱼 · the Windows app: the pond as the desktop wallpaper on every screen, a tray icon to control it, and an
+// 半亩方塘 · the Windows app: the pond as the desktop wallpaper on every screen, a tray icon to control it, and an
 // interactive window. Every save one pond page makes is passed to the others, so they stay in step.
 using System;
 using System.Collections.Generic;
@@ -12,11 +12,11 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Microsoft.Win32;
 
-namespace BichiPond
+namespace SkyPond
 {
     internal sealed class PondApp : ApplicationContext
     {
-        private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run", RunName = "BichiKoiPond";
+        private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run", RunName = "SkyPond";
         private readonly List<WallpaperForm> walls = new List<WallpaperForm>();
         private readonly NotifyIcon tray = new NotifyIcon();
         private ToolStripMenuItem soundItem;
@@ -67,12 +67,12 @@ namespace BichiPond
             try { runtime = CoreWebView2Environment.GetAvailableBrowserVersionString(); } catch (WebView2RuntimeNotFoundException) { }
             if (string.IsNullOrEmpty(runtime))
             {
-                if (MessageBox.Show("碧池观鱼需要 Microsoft Edge WebView2 运行时（Windows 11 自带，Windows 10 多数已通过更新安装）。\n\n现在打开下载页面吗？", "碧池观鱼", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                if (MessageBox.Show("半亩方塘需要 Microsoft Edge WebView2 运行时（Windows 11 自带，Windows 10 多数已通过更新安装）。\n\n现在打开下载页面吗？", "半亩方塘", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                     PondPage.OpenInBrowser("https://developer.microsoft.com/microsoft-edge/webview2/");
                 ExitThread();
                 return;
             }
-            string data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BichiPond", "WebView2");
+            string data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkyPond", "WebView2");
             // A wallpaper page is clicked through to the desktop's icon layer (see TapIfDesktop), so it never sees a real
             // user gesture; Chromium's autoplay policy would then keep its AudioContext suspended forever and the desktop
             // pond would stay silent however the sound setting is switched. The interactive window gets gestures itself,
@@ -222,12 +222,12 @@ namespace BichiPond
             if (walls.Count > 0 && walls[0].IsHandleCreated) walls[0].BeginInvoke(a);
         }
 
-        // Something went wrong: keep the details in %LOCALAPPDATA%\BichiPond\error.log and say where they are.
+        // Something went wrong: keep the details in %LOCALAPPDATA%\SkyPond\error.log and say where they are.
         private static void Report(string what, Exception ex)
         {
-            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BichiPond"), log = Path.Combine(dir, "error.log");
+            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkyPond"), log = Path.Combine(dir, "error.log");
             try { Directory.CreateDirectory(dir); File.AppendAllText(log, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {what} (Windows {Environment.OSVersion.Version})\r\n{ex}\r\n\r\n"); } catch (Exception) { }
-            MessageBox.Show($"{what}：{ex.Message}\n\n详细信息已记录在：\n{log}", "碧池观鱼", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show($"{what}：{ex.Message}\n\n详细信息已记录在：\n{log}", "半亩方塘", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         /// <summary>Records something worth knowing without interrupting anyone: a lost WebView2 process is recovered on its
@@ -235,7 +235,7 @@ namespace BichiPond
         /// would otherwise leave nothing behind to diagnose.</summary>
         private static void Note(string what)
         {
-            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BichiPond"), log = Path.Combine(dir, "error.log");
+            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkyPond"), log = Path.Combine(dir, "error.log");
             try { Directory.CreateDirectory(dir); File.AppendAllText(log, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {what} (Windows {Environment.OSVersion.Version})\r\n\r\n"); } catch (Exception) { }
         }
 
@@ -243,9 +243,9 @@ namespace BichiPond
         private void BuildTray()
         {
             tray.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-            tray.Text = "碧池观鱼";
+            tray.Text = "半亩方塘";
             var menu = new ContextMenuStrip();
-            menu.Items.Add(new ToolStripMenuItem("碧池观鱼") { Enabled = false });
+            menu.Items.Add(new ToolStripMenuItem("半亩方塘") { Enabled = false });
             menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add("打开交互窗口", null, (s, e) => OpenWindow());
             var weatherMenu = new ToolStripMenuItem("天气");
@@ -264,7 +264,7 @@ namespace BichiPond
             var startup = new ToolStripMenuItem("开机时启动", null, (s, e) => SetStartup(!IsStartup()));
             menu.Items.Add(startup);
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add("退出碧池观鱼", null, (s, e) => Quit());
+            menu.Items.Add("退出半亩方塘", null, (s, e) => Quit());
             menu.Opening += (s, e) =>
             {
                 foreach (ToolStripItem i in weatherMenu.DropDownItems) if (i is ToolStripMenuItem mi && mi.Tag is string v) mi.Checked = v == weather;

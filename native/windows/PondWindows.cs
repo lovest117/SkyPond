@@ -1,4 +1,4 @@
-// 碧池观鱼 · the windows that show the pond: one wallpaper per screen (inside the desktop, no controls) and the
+// 半亩方塘 · the windows that show the pond: one wallpaper per screen (inside the desktop, no controls) and the
 // interactive window with all of the pond's controls. Both are the same web page in WebView2, served from the web\
 // folder beside the exe under https://pond.local, so storage, weather lookups and WebGL work as in a browser.
 using System;
@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
-namespace BichiPond
+namespace SkyPond
 {
     internal static class PondPage
     {
@@ -92,7 +92,7 @@ namespace BichiPond
             Bounds = screen.Bounds;
             BackColor = PondPage.Backdrop;
             AutoScaleMode = AutoScaleMode.None; // sizes are the screen's real pixels, never rescaled
-            Text = "碧池观鱼 Wallpaper";
+            Text = "半亩方塘 Wallpaper";
         }
 
         /// <summary>Last pause state sent to the page, so it is only told when that changes.</summary>
@@ -135,7 +135,7 @@ namespace BichiPond
 
         public InteractiveForm()
         {
-            Text = "碧池观鱼";
+            Text = "半亩方塘";
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             BackColor = PondPage.Backdrop;
             StartPosition = FormStartPosition.CenterScreen;

@@ -5,6 +5,14 @@
   const TAU = Math.PI * 2;
   const rand = (a, b) => a + Math.random() * (b - a);
   const MUSIC = ['guqin', 'bowl', 'chimes', 'off'];
+  const NOISE_TYPES = ['white', 'pink', 'brown', 'off'];
+  // 用户上传的真实背景音（自己命名），音频文件放在 sounds/ 目录，由本清单登记。处理音频时同步追加。
+  const CUSTOM_SOUNDS = [
+    // { id: 'my-rain', name: '我的雨声', file: 'sounds/my-rain.ogg' }
+  ];
+  const CUSTOM_IDS = CUSTOM_SOUNDS.map(s => s.id);
+  // 可作为专注背景音的全部类型：合成噪声 + 自定义真实音频
+  const FOCUS_SOUNDS = ['white', 'pink', 'brown', ...CUSTOM_IDS];
 
   // ---------- Offline synthesis ----------
   const noise = n => { const d = new Float32Array(n); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; return d; };
@@ -32,6 +40,47 @@
   function normalize(L, R, peak) { let m = 1e-6; for (let i = 0; i < L.length; i++) m = Math.max(m, Math.abs(L[i]), Math.abs(R[i])); const k = peak / m; for (let i = 0; i < L.length; i++) { L[i] *= k; R[i] *= k; } }
   // Periodic modulation with whole cycles over the loop, so it matches at the seam.
   const loopLfo = (n, parts) => i => parts.reduce((v, [cycles, depth, ph]) => v + depth * Math.sin(TAU * cycles * i / n + ph), 1);
+
+  // ---------- Focus noise: white / pink / brown, all generated from plain random noise ----------
+  // White noise: equal energy across all frequencies, the classic static hiss.
+  function whiteNoise(n) {
+    const d = new Float32Array(n);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    return d;
+  }
+  // Pink noise: Paul Kellet's refined filter, -3 dB per octave, softer and more natural than white.
+  function pinkNoise(n) {
+    const d = new Float32Array(n);
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < n; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      b3 = 0.86650 * b3 + white * 0.3104856;
+      b4 = 0.55000 * b4 + white * 0.5329522;
+      b5 = -0.7616 * b5 - white * 0.0168980;
+      d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+      b6 = white * 0.115926;
+    }
+    return d;
+  }
+  // Brown noise: integrated white noise (Brownian motion), strong low end, deep and gentle.
+  function brownNoise(n) {
+    const d = new Float32Array(n);
+    let last = 0;
+    for (let i = 0; i < n; i++) {
+      const white = Math.random() * 2 - 1;
+      last = (last + 0.02 * white) / 1.02;
+      d[i] = last * 3.5;
+    }
+    return d;
+  }
+  function focusNoise(name, n) {
+    if (name === 'white') return whiteNoise(n);
+    if (name === 'pink') return pinkNoise(n);
+    return brownNoise(n);
+  }
 
   const AMBIENT_SYNTH = {
     stream(sr) {
@@ -150,13 +199,13 @@
   const unit = v => Math.max(0, Math.min(1, Number(v)));
   class PondAudio {
     constructor() {
-      this.active = false; this.context = null; this.layers = {}; this.buffers = {}; this.timer = 0; this.next = 0; this.events = {};
-      this.opts = { water: true, waterType: 'stream', waterVol: .6, weatherSound: true, weatherVol: .6, music: 'guqin', musicVol: .5, sfx: true, volume: .7 };
+      this.active = false; this.context = null; this.layers = {}; this.buffers = {}; this.timer = 0; this.next = 0; this.events = {}; this.refreshToken = 0;
+      this.opts = { water: true, waterType: 'stream', waterVol: .6, weatherSound: true, weatherVol: .6, music: 'guqin', musicVol: .5, noiseType: 'off', noiseVol: .5, sfx: true, volume: .7 };
       this.scene = { weather: 'sunny', night: false, rain: .5 };
     }
     configure(settings) {
       const vol = (v, d) => Number.isFinite(Number(v)) ? unit(v) : d;
-      this.opts = { water: settings.water !== false, waterType: WATERS.includes(settings.waterType) ? settings.waterType : 'stream', waterVol: vol(settings.waterVol, .6), weatherSound: settings.weatherSound !== false, weatherVol: vol(settings.weatherVol, .6), music: MUSIC.includes(settings.music) ? settings.music : 'guqin', musicVol: vol(settings.musicVol, .5), sfx: settings.sfx !== false, volume: vol(settings.volume, .7) };
+      this.opts = { water: settings.water !== false, waterType: WATERS.includes(settings.waterType) ? settings.waterType : 'stream', waterVol: vol(settings.waterVol, .6), weatherSound: settings.weatherSound !== false, weatherVol: vol(settings.weatherVol, .6), music: MUSIC.includes(settings.music) ? settings.music : 'guqin', musicVol: vol(settings.musicVol, .5), noiseType: FOCUS_SOUNDS.includes(settings.noiseType) ? settings.noiseType : 'off', noiseVol: vol(settings.noiseVol, .5), sfx: settings.sfx !== false, volume: vol(settings.volume, .7) };
       this.scene = { weather: settings.weather, night: !!settings.night, rain: vol(settings.rainAmount, .5) };
       if (!this.context) return;
       const now = this.context.currentTime, o = this.opts;
@@ -164,6 +213,7 @@
       this.waterBus.gain.setTargetAtTime(o.water ? o.waterVol * .7 : 0, now, .3);
       this.weatherBus.gain.setTargetAtTime(o.weatherSound ? o.weatherVol * .75 : 0, now, .3);
       this.musicBus.gain.setTargetAtTime(o.musicVol * .9, now, .3);
+      this.noiseBus.gain.setTargetAtTime(o.noiseType !== 'off' ? o.noiseVol * .8 : 0, now, .3);
       if (this.active) this.refresh();
     }
     setup() {
@@ -177,7 +227,7 @@
       this.reverb = ctx.createConvolver(); this.reverb.buffer = ir;
       const wet = ctx.createGain(); wet.gain.value = .55; this.reverb.connect(wet).connect(this.master);
       const bus = (verb) => { const g = ctx.createGain(); g.gain.value = 0; g.connect(this.master); if (verb) { const v = ctx.createGain(); v.gain.value = verb; g.connect(v).connect(this.reverb); } return g; };
-      this.waterBus = bus(0); this.weatherBus = bus(.18); this.musicBus = bus(1); this.sfxBus = bus(.12); this.sfxBus.gain.value = .8;
+      this.waterBus = bus(0); this.weatherBus = bus(.18); this.musicBus = bus(1); this.noiseBus = bus(0); this.sfxBus = bus(.12); this.sfxBus.gain.value = .8;
       this.configure({ ...this.opts, ...this.scene, rainAmount: this.scene.rain });
     }
     buffer(name, make) {
@@ -188,15 +238,51 @@
       const sr = name.startsWith('rain') ? 32000 : 22050;
       return this.buffer(name, () => [sr, name === 'rainLight' ? AMBIENT_SYNTH.rain(sr, .25) : name === 'rainHeavy' ? AMBIENT_SYNTH.rain(sr, 1) : AMBIENT_SYNTH[name](sr)]);
     }
+    // Focus noise buffer: 3 seconds of mono synthesised noise, looped seamlessly.
+    noiseBuffer(name) {
+      const sr = 22050;
+      return this.buffer(`noise_${name}`, () => [sr, [focusNoise(name, sr * 3)]]);
+    }
+    // 用户上传的真实音频：fetch 文件后解码，结果缓存
+    async customBuffer(id) {
+      if (this.buffers[id]) return this.buffers[id];
+      const item = CUSTOM_SOUNDS.find(s => s.id === id);
+      if (!item) throw new Error('unknown sound ' + id);
+      const resp = await fetch(item.file);
+      if (!resp.ok) throw new Error('无法加载 ' + item.file);
+      const raw = await resp.arrayBuffer();
+      const buf = await this.context.decodeAudioData(raw);
+      this.buffers[id] = buf;
+      return buf;
+    }
     // Fade each loop toward its target level; loops that fall silent are stopped.
-    refresh() {
+    async refresh() {
+      const token = ++this.refreshToken;
       const ctx = this.context, now = ctx.currentTime, want = {};
-      if (this.active) { want[this.opts.waterType === 'bamboo' ? 'trickle' : this.opts.waterType] = { level: 1, bus: this.waterBus }; for (const [k, v] of Object.entries(weatherLayers(this.scene))) want[k] = { level: v, bus: this.weatherBus }; }
+      if (this.active) {
+        want[this.opts.waterType === 'bamboo' ? 'trickle' : this.opts.waterType] = { level: 1, bus: this.waterBus };
+        for (const [k, v] of Object.entries(weatherLayers(this.scene))) want[k] = { level: v, bus: this.weatherBus };
+        if (this.opts.noiseType !== 'off') {
+          const key = CUSTOM_IDS.includes(this.opts.noiseType) ? `custom_${this.opts.noiseType}` : `noise_${this.opts.noiseType}`;
+          want[key] = { level: 1, bus: this.noiseBus };
+        }
+      }
       for (const name of new Set([...Object.keys(this.layers), ...Object.keys(want)])) {
+        if (token !== this.refreshToken) return;
         let layer = this.layers[name];
-        if (!layer && want[name]) {
-          const src = ctx.createBufferSource(), gain = ctx.createGain(); src.buffer = this.loopBuffer(name); src.loop = true; gain.gain.value = 0;
-          src.connect(gain).connect(want[name].bus); src.start(now, Math.random() * src.buffer.duration); layer = this.layers[name] = { src, gain };
+        if (!layer && want[name] && !this.layers[name]) {
+          let buffer;
+          if (name.startsWith('custom_')) buffer = await this.customBuffer(name.slice(7));
+          else if (name.startsWith('noise_')) buffer = this.noiseBuffer(name.slice(6));
+          else buffer = this.loopBuffer(name);
+          if (token !== this.refreshToken) return;
+          if (this.layers[name]) { layer = this.layers[name]; }
+          else {
+            const src = ctx.createBufferSource(), gain = ctx.createGain();
+            src.buffer = buffer;
+            src.loop = true; gain.gain.value = 0;
+            src.connect(gain).connect(want[name].bus); src.start(now, Math.random() * src.buffer.duration); layer = this.layers[name] = { src, gain };
+          }
         }
         if (!layer) continue;
         const level = want[name] ? want[name].level : 0; layer.gain.gain.cancelScheduledValues(now); layer.gain.gain.setTargetAtTime(level, now, 1.2);
@@ -351,5 +437,5 @@
     tap() { if (this.ok()) this.drop(this.context.currentTime, rand(520, 700), .2, 0, 1.2); }
     drop(t, f, gain, pan, rise = .9) { this.tone(t, f, f * (1 + rise), Math.min(.12, 22 / f + .02) * 1.6, gain, pan, this.sfxBus, 'sine', .002); }
   }
-  root.PondAudio = { PondAudio, MUSIC, WATERS };
+  root.PondAudio = { PondAudio, MUSIC, WATERS, NOISE_TYPES, CUSTOM_SOUNDS };
 })(window);

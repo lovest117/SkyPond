@@ -536,6 +536,14 @@ void main(){
       gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, gl.RGBA, gl.UNSIGNED_BYTE, sprite);
       atlasDirty = true;
     }
+    // Swap the pond bed for another same-size painting (seasonal backgrounds are all 1672x941,
+    // so fitBed and the image<->screen mapping stay valid and only the texture is re-uploaded).
+    function setBedImage(img) {
+      gl.bindTexture(gl.TEXTURE_2D, bedTex);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.generateMipmap(gl.TEXTURE_2D);
+    }
 
     function drawQuad() { gl.bindVertexArray(quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); }
     function bindTex(unit, tex) { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex); }
@@ -657,7 +665,7 @@ void main(){
     }
 
     const api = {
-      kind: 'webgl2', ripples: !!floatRT, sprites, resize, imageToScreen, setFish, render,
+      kind: 'webgl2', ripples: !!floatRT, sprites, resize, imageToScreen, setFish, setBedImage, render,
       drop(x, y, r, s) { if (drops.length < 96) drops.push([x, y, r, s]); },
       // One leaf, flower or rock from the painting (image px ellipse), turned by angle and moved by (dx, dy) screen px.
       floater(ix, iy, irx, iry, rot, angle, dx, dy, push, snowK = 1, wetKind = 1, pool = 0, seed = 0) {
