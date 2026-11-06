@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#738c7c" />
-  <meta name="description" content="一方碧潭，片刻闲心。投喂锦鲤、听雨观鱼，拥有属于自己的小小池塘。" />
-  <title>碧池观鱼 · 一方池塘，片刻闲心</title>
+  <meta name="description" content="半亩方塘，片刻闲心。投喂锦鲤、听雨观鱼，拥有属于自己的小小池塘。" />
+  <title>半亩方塘 · 一方池塘，片刻闲心</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="style.css" />
   <script src="core.js" defer></script>
@@ -25,7 +25,7 @@
     <canvas id="labels" aria-hidden="true"></canvas>
     <header class="masthead ui">
       <span class="seal" aria-hidden="true">观</span>
-      <div><h1>碧池观鱼</h1><p>A LITTLE POND, A QUIET MIND</p></div>
+      <div><h1>半亩方塘</h1><p>A LITTLE POND, A QUIET MIND</p></div>
     </header>
     <aside class="weather-card ui" aria-label="时间与天气">
       <div class="weather-top"><span id="weather-location">池畔时光</span><button class="icon-button" data-panel="weather" aria-label="天气设置" data-icon="sliders"></button></div>
@@ -33,7 +33,7 @@
       <div class="weather-line"><span id="weather-symbol" data-icon="sun"></span><strong id="weather-label">晴日</strong><span id="temperature">随心天气</span></div>
       <div class="weather-foot"><span class="status-dot"></span><span id="weather-note">风轻水暖，正宜观鱼</span></div>
     </aside>
-    <div class="verse ui"><span>水清鱼读月</span><span>花静鸟谈天</span><i>闲 观</i></div>
+    <div class="verse ui" id="verse" role="button" tabindex="0" aria-label="点击换一句诗"><span></span><span></span><i>半 亩</i></div>
     <div class="pond-meta ui"><span class="status-dot"></span><span id="fish-count">24 尾锦鲤，悠然自得</span><span class="meta-divider"></span><span id="fed-count">今日投喂 0 次</span></div>
     <div class="bottom-ui ui">
       <p class="pond-hint" id="pond-hint">轻点水面，投下一点欢喜</p>

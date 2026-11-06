@@ -1,10 +1,10 @@
-// 碧池观鱼 · the Win32 calls the wallpaper needs: finding the desktop's window layers, reparenting into them,
+// 半亩方塘 · the Win32 calls the wallpaper needs: finding the desktop's window layers, reparenting into them,
 // a low-level mouse hook for taps on the desktop, and window/monitor geometry.
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace BichiPond
+namespace SkyPond
 {
     internal static class Native
     {
