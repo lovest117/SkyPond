@@ -1,7 +1,7 @@
 // 碧池观鱼 · the pond page in a WebView, shared by the app window and the live wallpaper.
 // Every pond page in the process is registered here: when one saves, the save is handed to the others,
 // so a koi named in the app is named on the home screen a moment later.
-package com.bichi.koipond;
+package com.skypond.koipond;
 
 import android.app.WallpaperManager;
 import android.content.ComponentName;
