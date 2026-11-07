@@ -25,14 +25,16 @@ macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engin
 
 ## 下载
 
-在 [Releases](https://github.com/lovest117/fishwallpaper/releases/latest) 下载对应平台的安装包：
+在 [Releases](https://github.com/lovest117/fishwallpaper/releases/latest) 获取对应平台的文件：
 
-| 平台 | 文件 | 说明 |
+| 平台 | 预编译包 / 获取方式 | 说明 |
 | --- | --- | --- |
-| macOS 12+（Apple 芯片与 Intel） | `SkyPond-<版本>-macOS.dmg` | 打开后拖进「应用程序」，双击运行，池塘即成为每块屏幕的桌面背景；菜单栏 🐟 控制。首次打开请右键 →「打开」（未经 Apple 公证） |
-| Windows 10 / 11 | `SkyPond-<版本>-Windows.zip` | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
-| Android 7.0+ | `SkyPond-<版本>-Android.apk` | 安装后第一次打开即进入动态壁纸预览，点「设置壁纸」 |
-| 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip` | 解压后打开 `index.html`，或在 Wallpaper Engine 中导入该文件夹 |
+| Windows 10 / 11 | `SkyPond-<版本>-Windows.zip`（Release 已提供） | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
+| macOS 12+ | 暂未提供预编译包，需自行构建 | 只能在 macOS 上运行 `scripts/build-macos.sh`，构建与使用见下方「macOS 动态壁纸应用」 |
+| Android 7.0+ | 暂未提供预编译包，需自行构建 | 运行 `scripts/build-android.sh`，构建与使用见下方「安卓动态壁纸（APK）」 |
+| 浏览器 / Wallpaper Engine | 直接使用源码，无需下载包 | 本地 `npm run dev` 启动，或双击 `index.html`；Wallpaper Engine 导入包含 `project.json` 的目录 |
+
+> 当前 Release（v1.1.0）仅提供 Windows 预编译包。macOS 与 Android 的完整源码均已包含在仓库中，可按对应章节自行构建；这两个平台的原生壳尚未做品牌改名，构建产物的名称与署名会保留旧标识（详见各章节说明）。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
@@ -142,11 +144,17 @@ gh auth login              # 首次使用时登录
 
 ## macOS 动态壁纸应用
 
+> **状态说明**：当前 Release 未提供 macOS 预编译包，需在 macOS 上自行构建。`scripts/build-macos.sh` 为 zsh 脚本，依赖 Swift 编译器及 sips、iconutil、codesign、lipo、hdiutil 等 Apple 专属工具，**无法在 Windows / Linux 上构建**。
+
+**构建前提**：macOS 12 及以上，安装 Xcode 或 Command Line Tools（提供 `swiftc`）。
+
 ```sh
 ./scripts/build-macos.sh
 ```
 
-生成 `dist/碧池观鱼.app`（约 4MB）和可拖拽安装的 `dist/碧池观鱼-<版本>.dmg`（当前 1.2.1），支持 macOS 12 及以上。构建工具链仍能链接 Intel 时生成通用二进制；当前机器的 macOS 27 SDK 已不含 x86_64 的 Swift 运行库，因此产物为 Apple 芯片（arm64）版本。应用为临时（ad-hoc）签名，首次在其他 Mac 上打开时需右键 →「打开」。
+生成 `dist/碧池观鱼.app`（约 4MB）和可拖拽安装的 `dist/碧池观鱼-<版本>.dmg`（原生壳版本 1.2.1），支持 macOS 12 及以上。工具链仍能链接 Intel 时生成通用二进制（arm64 + x86_64）；较新的 macOS SDK 已不含 x86_64 的 Swift 运行库，则只产出 Apple 芯片（arm64）版本。应用为临时（ad-hoc）签名，首次在其他 Mac 上打开时需右键 →「打开」。
+
+**命名与资源现状**：macOS 原生壳（`native/macos/Info.plist`、`main.swift`）尚未做品牌改名，仍使用「碧池观鱼 / BichiPond / com.bichi.koipond」标识，因此构建出的 app、dmg 文件名与署名会保留旧名；其内加载的网页内容已是新版（含 19 联诗句等）。此外当前构建脚本只打包 `pond.jpg`，未拷贝四季背景图，macOS 版暂不显示四季切换图片。
 
 双击打开后，池塘即铺满每块屏幕的桌面背景层——位于系统壁纸上、桌面图标下，不影响正常使用桌面；多显示器与空间切换均支持。
 
@@ -161,7 +169,7 @@ gh auth login              # 首次使用时登录
 
 所有窗口（每块屏幕的壁纸与交互窗口）实时同步：在任一处改名、添加或放生锦鲤、切换天气与声音设置，其他窗口立即跟随，以最近一次修改为准；进食数量取各窗口中的较大值。底部控制栏会自动避让程序坞高度。
 
-自检：`BICHI_SELFTEST=<输出目录> "dist/碧池观鱼.app/Contents/MacOS/BichiPond"` 会自动走一遍菜单操作（打开交互窗口、切换天气、改名同步、暂停与恢复、关闭窗口），逐项输出 PASS / FAIL 与帧率，把各阶段的壁纸截图存入该目录，完成后恢复原设置并退出。
+自检：`BICHI_SELFTEST=<输出目录> "dist/碧池观鱼.app/Contents/MacOS/BichiPond"`（路径与构建产物名一致）会自动走一遍菜单操作（打开交互窗口、切换天气、改名同步、暂停与恢复、关闭窗口），逐项输出 PASS / FAIL 与帧率，把各阶段的壁纸截图存入该目录，完成后恢复原设置并退出。
 
 ## Windows 桌面动态壁纸
 
@@ -179,15 +187,21 @@ gh auth login              # 首次使用时登录
 - 资源管理器重启或显示器变化后自动重建壁纸；退出后桌面恢复为原来的系统壁纸。
 - 数据和出错日志保存在 `%LOCALAPPDATA%\SkyPond`。
 
-验证范围：可执行文件、清单（按显示器 DPI 感知）、图标、WebView2 加载器（x86 / x64 / ARM64）均已检查，编译时警告视为错误且零警告；这台 Mac 上没有 Windows 环境，尚未在 Windows 上实际运行。首次运行时 Windows 可能提示“已保护你的电脑”（未签名程序），点“更多信息 → 仍要运行”。
+验证范围：可执行文件、清单（按显示器 DPI 感知）、图标、WebView2 加载器（x86 / x64 / ARM64）均已检查，编译时警告视为错误且零警告，并已在 Windows 10 / 11 上实际启动运行验证。首次运行时 Windows 可能提示“已保护你的电脑”（未签名程序），点“更多信息 → 仍要运行”。
 
 ## 安卓动态壁纸（APK）
+
+> **状态说明**：当前 Release 未提供 APK 预编译包，需自行构建。`scripts/build-android.sh` 为 zsh 脚本，调用 aapt2、d8、zipalign、apksigner 等 Android 构建工具，需一次性准备好工具链（见脚本头部注释）。
+
+**构建前提**：JDK 17、Android Build Tools r34、Platform 34（默认置于 `~/android-build`，可用环境变量 `ANDROID_BUILD` 覆盖）；最低支持 Android 7.0（API 24），目标 SDK 34。
 
 ```sh
 ./scripts/build-android.sh
 ```
 
-生成 `android/build/碧池观鱼.apk`，并复制到 `dist/碧池观鱼.apk`（约 1.9MB，版本 1.2.1；需 `~/android-build` 下的 JDK 17 与 Android 构建工具，见脚本头部说明）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。需要 Android 7.0（API 24）及以上。
+生成 `android/build/碧池观鱼.apk` 并复制到 `dist/碧池观鱼.apk`（约 1.9MB，原生壳版本 1.2.1 / versionCode 4）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
+
+**命名与资源现状**：Android 原生壳包名仍为 `com.bichi.koipond`，应用名、版本与签名别名（`android` 工程、`res/values/strings.xml`）尚未做品牌改名，构建出的 APK 文件名与系统内显示名会保留旧名；其内加载的网页内容已是新版（含 19 联诗句等）。当前构建脚本只打包 `pond.jpg`，未拷贝四季背景图，Android 版暂不显示四季切换图片。
 
 这是**手机桌面的动态壁纸**：池塘就在主屏幕（及系统允许时的锁屏）背景里游动，应用图标和小部件浮在水面上。
 
