@@ -31,10 +31,10 @@ macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engin
 | --- | --- | --- |
 | Windows 10 / 11 | `SkyPond-<版本>-Windows.zip`（Release 已提供） | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
 | macOS 12+ | 暂未提供预编译包，需自行构建 | 只能在 macOS 上运行 `scripts/build-macos.sh`，构建与使用见下方「macOS 动态壁纸应用」 |
-| Android 7.0+ | 暂未提供预编译包，需自行构建 | 运行 `scripts/build-android.sh`，构建与使用见下方「安卓动态壁纸（APK）」 |
+| Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | 直接使用源码，无需下载包 | 本地 `npm run dev` 启动，或双击 `index.html`；Wallpaper Engine 导入包含 `project.json` 的目录 |
 
-> 当前 Release（v1.1.0）仅提供 Windows 预编译包。macOS 与 Android 的完整源码均已包含在仓库中，可按对应章节自行构建；这两个平台的原生壳尚未做品牌改名，构建产物的名称与署名会保留旧标识（详见各章节说明）。
+> 当前 Release（v1.1.0）已提供 Windows 与 Android 预编译包。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图；macOS 仍需在 Mac 上自行构建，且原生壳尚未改名、构建产物保留旧标识（详见各章节说明）。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
@@ -191,21 +191,22 @@ gh auth login              # 首次使用时登录
 
 ## 安卓动态壁纸（APK）
 
-> **状态说明**：当前 Release 未提供 APK 预编译包，需自行构建。`scripts/build-android.sh` 为 zsh 脚本，调用 aapt2、d8、zipalign、apksigner 等 Android 构建工具，需一次性准备好工具链（见脚本头部注释）。
+> **状态说明**：Release 已提供签名好的 `SkyPond-<版本>-Android.apk`，可直接下载安装；也可自行构建。Linux 用 `scripts/build-android-linux.sh`（bash），macOS 用 `scripts/build-android.sh`（zsh），两者都调用 aapt2、d8、zipalign、apksigner 等 Android 构建工具，需一次性准备好工具链（见脚本头部注释）。
 
 **构建前提**：JDK 17、Android Build Tools r34、Platform 34（默认置于 `~/android-build`，可用环境变量 `ANDROID_BUILD` 覆盖）；最低支持 Android 7.0（API 24），目标 SDK 34。
 
 ```sh
-./scripts/build-android.sh
+./scripts/build-android-linux.sh   # Linux
+./scripts/build-android.sh         # macOS
 ```
 
-生成 `android/build/碧池观鱼.apk` 并复制到 `dist/碧池观鱼.apk`（约 1.9MB，原生壳版本 1.2.1 / versionCode 4）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
+生成 `android/build/SkyPond-1.1.0-Android.apk` 并复制到 `dist/`（约 4.2MB，版本 1.1.0 / versionCode 5）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
 
-**命名与资源现状**：Android 原生壳包名仍为 `com.bichi.koipond`，应用名、版本与签名别名（`android` 工程、`res/values/strings.xml`）尚未做品牌改名，构建出的 APK 文件名与系统内显示名会保留旧名；其内加载的网页内容已是新版（含 19 联诗句等）。当前构建脚本只打包 `pond.jpg`，未拷贝四季背景图，Android 版暂不显示四季切换图片。
+**命名与资源现状**：Android 原生壳已完成品牌改名，包名 `com.skypond.koipond`、应用名「半亩方塘」、版本 1.1.0，签名密钥 CN=SkyPond；构建脚本会把 `pond.jpg` 与春、夏、秋、冬四张四季背景图一并打包，Android 版可正常切换四季图片。
 
 这是**手机桌面的动态壁纸**：池塘就在主屏幕（及系统允许时的锁屏）背景里游动，应用图标和小部件浮在水面上。
 
-- 安装后第一次点开图标，会直接进入系统的动态壁纸预览，点「设置壁纸」即可；以后也可以在应用设置里点「设为壁纸」，或在系统「壁纸」设置里选择动态壁纸「碧池观鱼」。
+- 安装后第一次点开图标，会直接进入系统的动态壁纸预览，点「设置壁纸」即可；以后也可以在应用设置里点「设为壁纸」，或在系统「壁纸」设置里选择动态壁纸「半亩方塘」。
 - 轻点桌面空白处投喂，锦鲤聚过来抢食；左右滑动翻页不会投喂。
 - 壁纸上不显示任何按钮；点应用图标（或壁纸预览里的「设置」）打开完整的池塘，可投喂、给锦鲤起名、切换天气与声音。改动会立即同步到桌面壁纸。
 - 桌面被应用挡住或熄屏时完全停止绘制，不耗电；显示时以 60 帧、按屏幕原生分辨率绘制（最高 3 倍像素密度）。设备跟不上时分两级自动降低精度（不低于 1 倍），页面每分钟在日志里记一行帧率与分辨率（`adb logcat | grep "\[pond\]"`）。
