@@ -7,7 +7,7 @@
 // Letting the virtual display write straight into the wallpaper's surface works on stock Android but leaves it black on
 // some manufacturers' systems. If no frame ever arrives (or the window cannot be shown), the wallpaper shows the pond
 // painting instead of black, and says why in the app's settings.
-package com.bichi.koipond;
+package com.skypond.koipond;
 
 import android.app.Presentation;
 import android.app.WallpaperManager;
@@ -87,9 +87,9 @@ public class PondWallpaperService extends WallpaperService {
             int dpi = getResources().getDisplayMetrics().densityDpi;
             boolean resized = w != width || h != height;
             width = w; height = h; target = holder;
-            if ("1".equals(sysProp("debug.bichi.still"))) { showStill("forced for testing (debug.bichi.still)"); return; }
+            if ("1".equals(sysProp("debug.skypond.still"))) { showStill("forced for testing (debug.skypond.still)"); return; }
             try {
-                boolean bridge = Build.VERSION.SDK_INT >= 29 && !"1".equals(sysProp("debug.bichi.direct"));
+                boolean bridge = Build.VERSION.SDK_INT >= 29 && !"1".equals(sysProp("debug.skypond.direct"));
                 if (display == null) {
                     Surface out;
                     if (bridge) { startBridge(w, h); out = reader.getSurface(); } else out = holder.getSurface();
@@ -283,8 +283,8 @@ public class PondWallpaperService extends WallpaperService {
         }
     }
 
-    /** A system property, for testing on a device: debug.bichi.direct=1 renders straight into the wallpaper surface
-     *  (the pre-1.2.1 way); debug.bichi.still=1 shows the still painting. */
+    /** A system property, for testing on a device: debug.skypond.direct=1 renders straight into the wallpaper surface
+     *  (the pre-1.2.1 way); debug.skypond.still=1 shows the still painting. */
     static String sysProp(String key) {
         try { return (String) Class.forName("android.os.SystemProperties").getMethod("get", String.class).invoke(null, key); }
         catch (Exception e) { return ""; }

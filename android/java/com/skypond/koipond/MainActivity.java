@@ -2,7 +2,7 @@
 // It is the live wallpaper's settings screen too (see PondWallpaperService); on first launch it offers the
 // system's live-wallpaper preview, so the pond goes straight onto the home screen. Changes made here reach the
 // wallpaper as they are saved.
-package com.bichi.koipond;
+package com.skypond.koipond;
 
 import android.app.Activity;
 import android.os.Build;
