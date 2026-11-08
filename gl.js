@@ -186,7 +186,7 @@ void main(){
 precision highp float;
 uniform sampler2D uScene, uSurface, uFloat, uNoise, uCloud;
 uniform vec4 uMoonDisc; uniform vec3 uBedU, uBedV; uniform vec2 uView;
-uniform float uRefract, uGlint, uSkyK, uVignette, uMoon, uBright, uSat, uShade, uTime, uCloudShade, uMist, uFlash;
+uniform float uRefract, uGlint, uSkyK, uVignette, uMoon, uDisc, uBright, uSat, uShade, uTime, uCloudShade, uMist, uFlash;
 uniform vec3 uGlintColor, uSky, uTint, uSun;
 in vec2 vUv; out vec4 o;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -219,17 +219,17 @@ void main(){
     maria += 1. - smoothstep(.08, .2, length(d - vec2(-.08, -.4)));
     float face = (1. - .24 * min(maria, 1.)) * (.9 + .16 * texture(uNoise, d * .5 + .37).r);
     // Ripples crossing the reflection light one side of each wave and shade the other.
-    float disc = (1. - smoothstep(.93, 1.03, r)) * mix(.05, 1., lit) * face * (1. - .18 * r * r) * clamp(1. + dot(-g, vec2(-.6, .6)) * 1.4, .35, 1.6);
-    night += vec3(.93, .92, .86) * disc * .78 + vec3(.6, .72, 1.) * (exp(-r * r / 6.) * .2 + exp(-r / 3.5) * .08) * (.3 + .7 * illum);
+    float disc = (1. - smoothstep(.93, 1.03, r)) * mix(.05, 1., lit) * face * (1. - .18 * r * r) * clamp(1. + dot(-g, vec2(-.6, .6)) * 1.4, .35, 1.6) * uDisc;
+    night += vec3(.93, .92, .86) * disc * .78 + vec3(.6, .72, 1.) * (exp(-r * r / 6.) * .2 + exp(-r / 3.5) * .08) * (.3 + .7 * illum) * uDisc;
     // Moonlight glitter gathers round the reflection; a few faint stars twinkle between the waves.
-    glint *= (.3 + exp(-length((px - uMoonDisc.xy) / uMoonDisc.z) / 5.) * 1.3) * (.3 + .7 * illum);
+    glint *= (.3 + exp(-length((px - uMoonDisc.xy) / uMoonDisc.z) / 5.) * 1.3) * (.3 + .7 * illum) * mix(.2, 1., uDisc);
     vec2 cell = floor(rp / 38.), f = fract(rp / 38.) - .5, sp = vec2(hash(cell + 3.1), hash(cell + 7.7)) - .5;
     float h = hash(cell), q = dot(f - sp * .7, f - sp * .7);
     if (h > .965) night += vec3(.8, .86, 1.) * exp(-q * 420.) * (.55 + .45 * sin(uTime * (1. + h * 3.) + h * 40.)) * (.6 + 3. * (h - .965));
     // Moonlight on the moving water: every wave facet turned toward the moon's reflection catches its light.
     vec2 toMoon = normalize(uMoonDisc.xy - px + 1e-4);
     float reach = exp(-length(px - uMoonDisc.xy) / (uMoonDisc.z * 16.));
-    night += vec3(.55, .66, .9) * (max(0., dot(-g, toMoon)) * .6 + length(g) * .14) * (.35 + .65 * reach) * (.4 + .6 * illum);
+    night += vec3(.55, .66, .9) * (max(0., dot(-g, toMoon)) * .6 + length(g) * .14) * (.35 + .65 * reach) * (.4 + .6 * illum) * mix(.35, 1., uDisc);
     night = (night + glint) * uMoon * (1. - cloud * .9);
     glint = vec3(0.);
   }
@@ -636,7 +636,7 @@ void main(){
       gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, canvas.width, canvas.height);
       p = P.final; gl.useProgram(p);
       gl.uniform2f(p.u('uView'), w, h); gl.uniform1f(p.u('uRefract'), env.refract); gl.uniform1f(p.u('uGlint'), env.glint); gl.uniform1f(p.u('uSkyK'), env.skyK);
-      gl.uniform1f(p.u('uVignette'), env.vignette); gl.uniform1f(p.u('uMoon'), env.moon); gl.uniform1f(p.u('uBright'), env.bright); gl.uniform1f(p.u('uSat'), env.sat); gl.uniform1f(p.u('uShade'), env.shade);
+      gl.uniform1f(p.u('uVignette'), env.vignette); gl.uniform1f(p.u('uMoon'), env.moon); gl.uniform1f(p.u('uDisc'), env.moonOn === false ? 0 : 1); gl.uniform1f(p.u('uBright'), env.bright); gl.uniform1f(p.u('uSat'), env.sat); gl.uniform1f(p.u('uShade'), env.shade);
       gl.uniform3fv(p.u('uGlintColor'), env.glintColor); gl.uniform3fv(p.u('uSky'), env.sky); gl.uniform3fv(p.u('uTint'), env.tint); gl.uniform3fv(p.u('uSun'), env.sun);
       gl.uniform1f(p.u('uCloudShade'), env.cloudShade); gl.uniform1f(p.u('uMist'), env.mist || 0); gl.uniform1f(p.u('uFlash'), env.flash || 0);
       setBed(p); gl.uniform4fv(p.u('uMoonDisc'), env.moonDisc); gl.uniform1f(p.u('uTime'), time);

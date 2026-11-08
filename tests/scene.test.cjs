@@ -6,7 +6,7 @@ const core = require('../core.js');
 const context = { window: { PondCore: core }, ImageData: class { constructor(w, h) { this.width = w; this.height = h; this.data = new Uint8ClampedArray(w * h * 4); } } };
 vm.runInNewContext(fs.readFileSync(require.resolve('../art.js'), 'utf8'), context);
 vm.runInNewContext(fs.readFileSync(require.resolve('../scene.js'), 'utf8'), context);
-const { PondScene, lookFor, moonAngle, MOON_PRESETS, MOON_LABELS } = context.window.PondScene;
+const { PondScene, lookFor, moonAngle, MOON_PRESETS, MOON_LABELS, DAY_PHASES } = context.window.PondScene;
 
 // A stand-in renderer: the painting maps 1:1 onto a 1672×941 screen.
 function pond(seed = 7) {
@@ -42,7 +42,7 @@ test('雨点打在荷叶、花苞上会溅起水花并让它们颤动，雨停�
 test('月相三档：新月细弧、弦月半轮、满月全轮，未知值回落到真实月龄', () => {
   const illum = a => (1 - Math.cos(a)) / 2;
   assert.deepEqual(Object.keys(MOON_PRESETS).sort(), ['full', 'new', 'quarter']);
-  assert.equal(JSON.stringify(MOON_LABELS), JSON.stringify({ new: '新月', quarter: '弦月', full: '满月' }));
+  assert.equal(JSON.stringify(MOON_LABELS), JSON.stringify({ new: '新月', quarter: '弦月', full: '满月', none: '星夜' }));
   assert.ok(Math.abs(illum(MOON_PRESETS.quarter) - .5) < 1e-4, '弦月亮面一半');
   assert.equal(MOON_PRESETS.full, Math.PI);
   const newMoon = illum(MOON_PRESETS.new);
@@ -59,6 +59,41 @@ test('场景把选定的月相写进池中倒影，切换后即时生效', () =>
   }
   scene.update(1 / 30, { ...base, night: false });
   assert.ok(scene.moonDisc[3] >= 0 && scene.moonDisc[3] < Math.PI * 2, '没有设置时按当日真实月龄');
+});
+
+test('星夜：没有月亮，倒影不画月盘，星光仍在', () => {
+  const scene = pond();
+  scene.update(1 / 30, { ...base, night: true, moonPhase: 'none' });
+  assert.equal(scene.moonOn, false, '星夜不画月盘');
+  scene.setLook('sunny', true, undefined, { ...base, night: true, moonPhase: 'none' });
+  assert.equal(scene.look.moonOn, false, '渲染参数里也关掉月盘');
+  assert.ok(scene.look.moon > 0, '仍走夜色，星星照旧');
+  scene.update(1 / 30, { ...base, night: true, moonPhase: 'full' });
+  scene.setLook('sunny', true, undefined, { ...base, night: true, moonPhase: 'full' });
+  assert.equal(scene.look.moonOn, true, '满月时月盘回来');
+});
+
+test('白昼四时段：晨昏更暗更暖，正午最亮，四档参数键一致', () => {
+  const phases = ['dawn', 'noon', 'slant', 'dusk'];
+  const keys = Object.keys(DAY_PHASES).sort();
+  assert.deepEqual(keys, ['dawn', 'dusk', 'noon', 'slant']);
+  const noonKeys = Object.keys(lookFor('sunny', false, .5, .5, 'noon')).sort();
+  for (const p of phases) assert.deepEqual(Object.keys(lookFor('sunny', false, .5, .5, p)).sort(), noonKeys, `${p} 参数键与正午一致`);
+  const noon = lookFor('sunny', false, .5, .5, 'noon');
+  const dawn = lookFor('sunny', false, .5, .5, 'dawn');
+  const dusk = lookFor('sunny', false, .5, .5, 'dusk');
+  assert.ok(dawn.bright < noon.bright && dusk.bright < noon.bright, '晨、暮比正午暗');
+  assert.ok(dawn.tint[2] > dawn.tint[0], '晨曦偏冷（蓝分量最高）');
+  assert.ok(dusk.tint[0] > dusk.tint[2], '暮色偏暖（红分量最高）');
+  assert.ok(dusk.shadow < noon.shadow, '暮色影子更软');
+  assert.ok(dawn.caustic < noon.caustic, '晨曦焦散更弱');
+  assert.ok(dawn.sun[1] < noon.sun[1] && dusk.sun[1] < noon.sun[1], '晨昏太阳更低');
+});
+
+test('夜色之下不再叠加白昼时段的光', () => {
+  const a = lookFor('sunny', true, .5, .5, 'dawn');
+  const b = lookFor('sunny', true, .5, .5, 'noon');
+  assert.deepEqual(a, b, '夜里四时段不影响月色');
 });
 
 test('大雨偶有闪电，闪光后发出雷声事件；小雨与晴天没有', () => {

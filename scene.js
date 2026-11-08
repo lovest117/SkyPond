@@ -39,11 +39,26 @@
     rain: { sunK: .4, bright: .76, sat: .66, tint: [.93, .98, 1.04], caustic: .035, causticTint: [.9, .95, 1], glint: .12, glintColor: [.9, .95, 1], sky: [.68, .74, .78], skyK: .13, cloudCover: 1, cloudShade: .08, wave: 1, refract: 15, ripple: 10, shade: .3, shadow: .5, vignette: .65, water: [.3, .39, .38], moon: 0, mist: .1 },
     snow: { sunK: .55, bright: .94, sat: .66, tint: [.99, 1.02, 1.07], caustic: .06, causticTint: [.95, .98, 1], glint: .28, glintColor: [.95, .98, 1], sky: [.9, .93, .96], skyK: .11, cloudCover: .75, cloudShade: .2, wave: .42, refract: 13, ripple: 8, shade: .22, shadow: .5, vignette: .5, water: [.4, .48, .48], moon: 0, mist: .04 }
   };
-  function lookFor(weather, night, rain = .5, snow = .5) {
+  // 白昼四时段：同一片水面，光的角度、冷暖与影子长短不同。数值叠在天气之上（夜间不叠）。
+  const DAY_PHASES = {
+    dawn:  { bright: .82, sat: .84, tint: [.9, .99, 1.12], sky: [.88, .9, .95], skyK: .05, shadow: .55, caustic: .68, glint: .55, sun: [-.6, .3, .74] },
+    noon:  { bright: 1, sat: 1, tint: [1, 1, 1], sky: null, skyK: 0, shadow: 1, caustic: 1, glint: 1, sun: [-.45, .45, .77] },
+    slant: { bright: .95, sat: 1.02, tint: [1.07, .99, .9], sky: [.93, .89, .82], skyK: .015, shadow: .9, caustic: .85, glint: 1.1, sun: [.55, .34, .76] },
+    dusk:  { bright: .78, sat: .88, tint: [1.12, .9, .8], sky: [.86, .72, .72], skyK: .04, shadow: .5, caustic: .45, glint: .6, sun: [.62, .18, .76] }
+  };
+  function lookFor(weather, night, rain = .5, snow = .5, dayPhase = 'noon') {
     const l = JSON.parse(JSON.stringify(LOOKS[weather] || LOOKS.sunny));
     if (weather === 'rain') Object.assign(l, { bright: .86 - .16 * rain, sat: .74 - .12 * rain, wave: .72 + .55 * rain, skyK: .09 + .07 * rain, mist: .04 + .12 * rain });
     if (weather === 'snow') Object.assign(l, { bright: .9 + .08 * snow, sat: .72 - .18 * snow, cloudCover: .6 + .4 * snow, skyK: .08 + .09 * snow, caustic: .07 * (1 - snow * .6), wave: .5 - .12 * snow, mist: .02 + .06 * snow });
-    if (night) Object.assign(l, { sunK: l.sunK * .45, bright: l.bright * .46, sat: l.sat * .72, tint: [.64, .8, 1.14], caustic: l.caustic * .25, glint: .55, glintColor: [.7, .82, 1], sky: [.22, .3, .44], skyK: l.skyK * 1.3 + .04, wave: l.wave * 1.1, shadow: l.shadow * .35, cloudShade: l.cloudShade * .5, moon: weather === 'sunny' || weather === 'snow' ? 1 : .35, water: [.2, .3, .36], mist: l.mist * .6 });
+    if (!night) {
+      const p = DAY_PHASES[dayPhase] || DAY_PHASES.noon;
+      l.bright *= p.bright; l.sat *= p.sat;
+      for (let i = 0; i < 3; i++) l.tint[i] *= p.tint[i];
+      if (p.sky) for (let i = 0; i < 3; i++) l.sky[i] = l.sky[i] * .4 + p.sky[i] * .6;
+      l.skyK += p.skyK; l.shadow *= p.shadow; l.caustic *= p.caustic; l.glint *= p.glint;
+      l.sun = p.sun;
+    }
+    if (night) Object.assign(l, { sunK: l.sunK * .45, bright: l.bright * .46, sat: l.sat * .72, tint: [.64, .8, 1.14], caustic: l.caustic * .25, glint: .55, glintColor: [.7, .82, 1], sky: [.22, .3, .44], skyK: l.skyK * 1.3 + .04, wave: l.wave * 1.1, shadow: l.shadow * .35, cloudShade: l.cloudShade * .5, moon: weather === 'sunny' || weather === 'snow' ? 1 : .35, water: [.2, .3, .36], mist: l.mist * .6, sun: [-.45, .45, .77] });
     return l;
   }
   // Age of the moon from a known new moon, so the reflection shows tonight's real phase.
@@ -53,7 +68,8 @@
   }
   // Three phases you can pick in the panel; an unknown value falls back to tonight's real age.
   const MOON_PRESETS = { new: .8, quarter: Math.PI / 2, full: Math.PI };
-  const MOON_LABELS = { new: '新月', quarter: '弦月', full: '满月' };
+  // 星夜：没有月亮，只剩星光——倒影整体隐去，星星仍留在水面。
+  const MOON_LABELS = { new: '新月', quarter: '弦月', full: '满月', none: '星夜' };
   function moonAngle(preset, date = new Date()) {
     const angle = MOON_PRESETS[preset];
     return Number.isFinite(angle) ? angle : moonPhase(date).angle;
@@ -365,17 +381,18 @@
       this.prevW = w; this.prevH = h;
     }
     setLook(weather, night, dt, amounts = {}) {
-      const target = lookFor(weather, night, amounts.rainAmount, amounts.snowAmount);
+      const target = lookFor(weather, night, amounts.rainAmount, amounts.snowAmount, amounts.dayPhase);
       if (dt === undefined) { const dir = this.look.shadowDir; this.look = target; this.look.shadowDir = dir; }
       else lerpLook(this.look, target, 1 - Math.exp(-dt * 1.1));
       // Clouds sail right and a little down the screen at a pace that reads as moving without hurrying.
       const span = Math.max(this.w, this.h);
-      Object.assign(this.look, { sun: [-.45, .45, .77], moonDisc: this.moonDisc || [0, 0, 1, 0], causticCell: this.causticCell || 80, cloudWind: [.021 * span, -.007 * span] });
+      Object.assign(this.look, { moonOn: this.moonOn !== false, moonDisc: this.moonDisc || [0, 0, 1, 0], causticCell: this.causticCell || 80, cloudWind: [.021 * span, -.007 * span] });
     }
     update(dt, settings) {
       this.time += dt;
       if (this.time - this.phaseAt > 60 || !this.moonDisc) { this.phaseAt = this.time; this.phase = moonPhase(); }
       this.moonDisc = [this.moonAt[0], this.h - this.moonAt[1], 26 * this.scale, moonAngle(settings.moonPhase)];
+      this.moonOn = settings.moonPhase !== 'none';
       const rainK = clamp(settings.rainAmount ?? .5, 0, 1), snowK = clamp(settings.snowAmount ?? .5, 0, 1);
       // Snow settles on leaves, flowers and rocks while it falls and melts away after.
       this.snowCover = settings.weather === 'snow' ? Math.min(snowK * .9, (this.snowCover || 0) + dt * (.004 + .02 * snowK)) : Math.max(0, (this.snowCover || 0) - dt * .012);
@@ -571,5 +588,5 @@
     ctx.globalAlpha = 1;
     root.PondGL.drawStrip2D(ctx, sprite, pose, s, x, y, 1);
   }
-  root.PondScene = { PondScene, drawKoi2D, lookFor, floatMask, moonPhase, moonAngle, MOON_PRESETS, MOON_LABELS };
+  root.PondScene = { PondScene, drawKoi2D, lookFor, floatMask, moonPhase, moonAngle, MOON_PRESETS, MOON_LABELS, DAY_PHASES };
 })(window);
