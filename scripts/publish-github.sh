@@ -15,7 +15,7 @@ echo "▸ Collecting the apps…"
 OUT="$ROOT/build/release"; rm -rf "$OUT"; mkdir -p "$OUT"
 cp "dist/SkyPond-$VERSION-Windows.zip" "$OUT/"
 cp "dist/SkyPond-$VERSION-Android.apk" "$OUT/"
-(cd dist && zip -qr -X "$OUT/SkyPond-$VERSION-Web.zip" index.html style.css core.js art.js gl.js scene.js audio.js app.js project.json assets -x '*.DS_Store')
+(cd dist && zip -qr -X "$OUT/SkyPond-$VERSION-Web.zip" index.html style.css core.js art.js gl.js scene.js now.js audio.js app.js project.json assets -x '*.DS_Store')
 if command -v sha256sum >/dev/null 2>&1; then
   (cd "$OUT" && sha256sum SkyPond-* > SHA256SUMS.txt)
 else

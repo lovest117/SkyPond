@@ -18,7 +18,7 @@ cd "$ROOT/android"
 
 # Package the current pond, never a stale copy: assets/ is rebuilt from the web sources every time.
 rm -rf assets && mkdir -p assets/assets
-for f in index.html app.js core.js art.js gl.js scene.js audio.js style.css; do cp "$ROOT/$f" assets/; done
+for f in index.html app.js core.js art.js gl.js scene.js now.js audio.js style.css; do cp "$ROOT/$f" assets/; done
 for img in pond.webp pond-spring.webp pond-summer.webp pond-autumn.webp pond-winter.webp; do cp "$ROOT/assets/$img" assets/assets/; done
 cp "$ROOT/assets/pond-data.js" "$ROOT/assets/favicon.svg" assets/assets/
 

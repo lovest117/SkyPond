@@ -16,7 +16,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <!-- 版本号唯一来源是仓库根目录的 version.json：scripts/build-windows.sh 会以 -p:Version 覆盖这里；
          这一行只是没走脚本时的兜底，改版本请改 version.json（node scripts/version.mjs check 会校验）。 -->
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Product>半亩方塘</Product>
     <AssemblyTitle>半亩方塘 · 锦鲤池塘动态壁纸</AssemblyTitle>
     <Copyright>半亩方塘 · 基于「碧池观鱼」二次创作</Copyright>
@@ -30,7 +30,7 @@
   </ItemGroup>
   <!-- The pond itself: the same web files as every other build, served to WebView2 from a web\ folder. -->
   <ItemGroup>
-    <Content Include="..\..\index.html;..\..\style.css;..\..\core.js;..\..\art.js;..\..\gl.js;..\..\scene.js;..\..\audio.js;..\..\app.js" Link="web\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\index.html;..\..\style.css;..\..\core.js;..\..\art.js;..\..\gl.js;..\..\scene.js;..\..\now.js;..\..\audio.js;..\..\app.js" Link="web\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\assets\pond.webp;..\..\assets\pond-spring.webp;..\..\assets\pond-summer.webp;..\..\assets\pond-autumn.webp;..\..\assets\pond-winter.webp;..\..\assets\pond-data.js;..\..\assets\favicon.svg" Link="web\assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

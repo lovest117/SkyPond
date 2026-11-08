@@ -9,18 +9,20 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 
 ![晴日池塘](docs/screenshots/web-sunny.jpg)
 
-| 雨中荷叶特写 | 鱼影 |
+| 雨中荷叶 | 夜里满月 |
 | --- | --- |
-| ![雨中荷叶特写](docs/screenshots/rain-lotus.jpg) | ![鱼影](docs/screenshots/fish-shadows.jpg) |
-| 雨中荷叶：叶心积起的一汪雨水、珠状水滴 | 晴天：鱼和乌龟在池底投下青绿色的影子 |
+| ![雨中荷叶](docs/screenshots/rain-lotus.jpg) | ![夜里满月](docs/screenshots/night-moon.jpg) |
+| 雨天：荷叶上积起雨水、池面飘着低低的雨雾 | 夜里满月落在池心，鱼游得慢下来、画面自动走节能档 |
 
-| 七种锦鲤花色与青鲢（逐片鳞片、圆钝的头部） | 池边石头上的小螃蟹 |
+| 四时面板 · 此刻此地 | 我的锦鲤与食量榜 |
 | --- | --- |
-| ![锦鲤花色](docs/screenshots/koi-varieties.jpg) | ![小螃蟹](docs/screenshots/crabs.jpg) |
+| ![四时面板](docs/screenshots/now-panel.jpg) | ![我的锦鲤](docs/screenshots/koi-varieties.jpg) |
+| 勾上「自动获取」，季节、昼夜、月相与天象都按当下时间地点自己走 | 面板末尾是同一批锦鲤的食量榜 |
 
-| 安卓桌面：轻点空白处投喂 | 安卓桌面：雨天 | 设为动态壁纸 | 应用内天气面板 |
-| --- | --- | --- | --- |
-| ![安卓投喂](docs/screenshots/android-home-feeding.jpg) | ![安卓雨天](docs/screenshots/android-home-rain.jpg) | ![壁纸预览](docs/screenshots/android-wallpaper-preview.jpg) | ![天气面板](docs/screenshots/android-weather-panel.jpg) |
+| 手机：轻点投喂 | 手机：雨天 | 手机：四时 |
+| --- | --- | --- |
+| ![手机投喂](docs/screenshots/phone-feed.jpg) | ![手机雨天](docs/screenshots/phone-rain.jpg) | ![手机四时](docs/screenshots/phone-panel.jpg) |
+| 轻点空白处投喂，滑动不投喂 | 下雨时池面起雾、荷花被打湿 | 昼 / 夜并排，选哪边只出哪边的四个 |
 
 ## 下载
 
@@ -32,11 +34,11 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip`（Release 已提供），也可直接用源码 | 解压后打开 `index.html`，或导入含 `project.json` 的目录；本地也可 `npm run dev` |
 
-> 当前 Release（v1.1.0）已提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
+> 当前 Release（v1.2.0）提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
 
-Windows 包内附了给不熟电脑的人看的两份东西：`0-点我启动.bat`（双击即开；万一只把 bat 拖出来、没解压整个文件夹，它会提示「整个文件夹一起解压」）和 `README.txt`（三步装好、用法、卸载与数据位置）。这两份文件是本次改动之后重新打包才带上的，已发布的 v1.1.0 旧包内没有，旧包直接双击 `SkyPond.exe` 即可。脚本只负责启动和提示，不会替你去动系统的「已保护你的电脑」拦截——那是绕过安全提示，交给用户自己判断；想先核验文件，用 Release 里的 `SHA256SUMS.txt`。
+Windows 包内附了给不熟电脑的人看的两份东西：`0-点我启动.bat`（双击即开；万一只把 bat 拖出来、没解压整个文件夹，它会提示「整个文件夹一起解压」）和 `README.txt`（三步装好、用法、卸载与数据位置）。脚本只负责启动和提示，不会替你去动系统的「已保护你的电脑」拦截——那是绕过安全提示，交给用户自己判断；想先核验文件，用 Release 里的 `SHA256SUMS.txt`。
 
-同一 Release 里还有两个**演示素材**（不是安装包，不能直接安装成锁屏或 AOD 主题）：`SkyPond-wallpaper-demo.mp4`（1080×1920 的动态壁纸实录，10 秒）、`SkyPond-AOD-demo.gif`（熄屏显示观感）。安卓的息屏显示由系统组件自行绘制，第三方应用无法向其中注入内容，这两个文件只是让你先看清楚效果再决定装不装。
+之前的两个演示素材（`SkyPond-wallpaper-demo.mp4`、`SkyPond-AOD-demo.gif`）拍的是旧界面，v1.2.0 里暂时撤下，按新的四时面板与此刻此地重录后再补到 Release；想看旧观感可以去 [v1.1.0](https://github.com/lovest117/SkyPond/releases/tag/v1.1.0)。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
@@ -144,6 +146,8 @@ gh auth login              # 首次使用时登录
 ./scripts/publish-github.sh
 ```
 
+日常发版走 CI，不必在本机打包：改 `version.json` → 写 `docs/release-notes-<版本>.md` → 提交并推 `main` → 打与版本号相同的 tag 并推送（`git tag v1.2.0 && git push skypond v1.2.0`）。`.github/workflows/release.yml` 会校验 tag 与 `version.json` 一致，在 runner 上构建 Windows / Android / Web 三个包、生成 `SHA256SUMS.txt`，并把发布说明一起挂到 Release；`ci.yml` 在每次推 `main` 时跑版本校验、单元测试与静态构建。
+
 ## 素材与服务
 
 池塘底图使用内置 imagegen 生成（`assets/pond.png` 为原图，`pond.webp` 为压缩后的运行版本，四季背景同理）；锦鲤、小乌龟、蝴蝶、蜻蜓、水波、焦散与雨雪均由代码绘制，所有声音由代码合成。更换底图时需同步修改 `scene.js` 中 `FLOATERS` 的荷叶与荷花标注。没有提取原视频的图片、代码或音频。生成提示词见 [assets/ARTWORK.md](assets/ARTWORK.md)。本项目基于开源项目「碧池观鱼」二次创作，画面素材与部分布局与原作存在差异。
@@ -192,7 +196,7 @@ gh auth login              # 首次使用时登录
 - 桌面被应用挡住或熄屏时完全停止绘制，不耗电；显示时以 60 帧、按屏幕原生分辨率绘制（最高 3 倍像素密度）。设备跟不上时分两级自动降低精度（不低于 1 倍），页面每分钟在日志里记一行帧率与分辨率（`adb logcat | grep "\[pond\]"`）。
 - 竖屏时池塘底图转四分之一，整方池塘（包括两侧的荷花丛与石头）铺满屏幕。
 
-实现：系统只给动态壁纸一块绘图表面（Surface），WebView 不能直接画进去。池塘网页运行在私有虚拟显示器上的 Presentation 窗口里，由 GPU（含 WebGL）渲染；Android 10 起，虚拟显示器先渲染到 ImageReader，再由壁纸引擎用 `lockHardwareCanvas` 把每一帧画到壁纸上——这是所有手机都支持的常规壁纸绘制方式（1.2.0 让虚拟显示器直接写入壁纸表面，在部分厂商系统上会黑屏）。若 10 秒内没有任何画面，或系统不允许显示该窗口，壁纸改为显示池塘静态画面而不是黑屏，原因写在应用「设置 › 手机动态壁纸」的状态里。
+实现：系统只给动态壁纸一块绘图表面（Surface），WebView 不能直接画进去。池塘网页运行在私有虚拟显示器上的 Presentation 窗口里，由 GPU（含 WebGL）渲染；Android 10 起，虚拟显示器先渲染到 ImageReader，再由壁纸引擎用 `lockHardwareCanvas` 把每一帧画到壁纸上——这是所有手机都支持的常规壁纸绘制方式（上游曾改成让虚拟显示器直接写入壁纸表面，在部分厂商系统上会黑屏，所以这里保留 ImageReader 这一版）。若 10 秒内没有任何画面，或系统不允许显示该窗口，壁纸改为显示池塘静态画面而不是黑屏，原因写在应用「设置 › 手机动态壁纸」的状态里。
 
 验证：已在 Android 14 / 15 / 16 模拟器（Pixel 6，WebView 113 / 133，主机 GPU）上安装并设为桌面与锁屏壁纸，确认池塘在主屏幕上以 60 帧、1082×2402 原生分辨率实时渲染，轻点空白处投喂、滑动不投喂，应用里切换下雨后桌面随之下雨，被应用遮挡时 CPU 占用降为零。
 

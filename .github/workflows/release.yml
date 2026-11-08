@@ -54,7 +54,7 @@ jobs:
           npm run build
           cd dist
           zip -qr -X "SkyPond-$(node ../scripts/version.mjs version)-Web.zip" \
-            index.html style.css core.js art.js gl.js scene.js audio.js app.js project.json assets -x '*.DS_Store'
+            index.html style.css core.js art.js gl.js scene.js now.js audio.js app.js project.json assets -x '*.DS_Store'
       - name: 生成校验和
         run: cd dist && sha256sum SkyPond-*.zip SkyPond-*.apk > SHA256SUMS.txt
       - name: 准备发布说明
