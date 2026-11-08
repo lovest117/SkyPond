@@ -252,7 +252,7 @@ if(settings.soundOn)syncSound();
 document.addEventListener('visibilitychange',()=>{last=0;if(sound.context&&sound.active){if(document.hidden)sound.context.suspend();else sound.context.resume();}if(document.hidden)persist();});
 addEventListener('pagehide',persist);
 function setPausedState(value){paused=!!value;last=0;if(sound.context&&sound.active){if(paused)sound.context.suspend();else sound.context.resume();}}
-// For a host app (the macOS menu-bar item, the Windows tray): switch weather, night or sound, pause the pond, read the current state.
+// For a host app (the Windows tray icon): switch weather, night or sound, pause the pond, read the current state.
 window.pondControl={
   set(o={}){if(['sunny','cloudy','rain','snow'].includes(o.weather)){settings.weather=o.weather;settings.autoWeather=false;weatherRequest++;}if(typeof o.night==='boolean')settings.night=o.night;if(typeof o.soundOn==='boolean'){settings.soundOn=o.soundOn;syncSound();}applyWeather();pickVerse(false);persist();if(activePanel==='weather')renderWeather();return this.state();},
   pause(value){setPausedState(value);return this.state();},

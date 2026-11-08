@@ -1,4 +1,4 @@
-// 碧池观鱼 · the pond as the phone's live wallpaper, behind the home screen (and the lock screen, where the system allows).
+// 半亩方塘 · the pond as the phone's live wallpaper, behind the home screen (and the lock screen, where the system allows).
 // A WallpaperService only hands us a Surface, and a WebView cannot draw into one directly. The pond page runs in a
 // Presentation window on a private virtual display, rendered by the GPU (WebGL and all).
 //
@@ -45,7 +45,7 @@ import android.widget.FrameLayout;
 import java.io.InputStream;
 
 public class PondWallpaperService extends WallpaperService {
-    static final String TAG = "BichiPond";
+    static final String TAG = "SkyPond";
 
     @Override
     public Engine onCreateEngine() { return new PondEngine(); }
@@ -95,7 +95,7 @@ public class PondWallpaperService extends WallpaperService {
                     if (bridge) { startBridge(w, h); out = reader.getSurface(); } else out = holder.getSurface();
                     DisplayManager dm = (DisplayManager) getSystemService(DISPLAY_SERVICE);
                     // No public flag: the display is private to this app, so its Presentation needs no special permission.
-                    display = dm.createVirtualDisplay("BichiPondWallpaper", w, h, dpi, out, 0);
+                    display = dm.createVirtualDisplay("SkyPondWallpaper", w, h, dpi, out, 0);
                     presentation = new Presentation(PondWallpaperService.this, display.getDisplay());
                     // Some systems do not pass the app's hardware acceleration on to this window; WebView needs it.
                     presentation.getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
@@ -124,7 +124,7 @@ public class PondWallpaperService extends WallpaperService {
         private void startBridge(int w, int h) {
             reader = ImageReader.newInstance(w, h, PixelFormat.RGBA_8888, 3,
                     HardwareBuffer.USAGE_GPU_SAMPLED_IMAGE | HardwareBuffer.USAGE_GPU_COLOR_OUTPUT);
-            copier = new HandlerThread("BichiPondFrames");
+            copier = new HandlerThread("SkyPondFrames");
             copier.start();
             reader.setOnImageAvailableListener(this::copyFrame, new Handler(copier.getLooper()));
         }

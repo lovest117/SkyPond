@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- 半亩方塘 for Windows: .NET Framework 4.8 (part of every Windows 10 and 11) + WebView2 (Edge's engine, also
-       preinstalled), so the download is small and nothing else needs installing. Builds on macOS/Linux too. -->
+       preinstalled), so the download is small and nothing else needs installing. Builds on Linux too. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>

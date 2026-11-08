@@ -1,4 +1,4 @@
-// 碧池观鱼 · the pond page in a WebView, shared by the app window and the live wallpaper.
+// 半亩方塘 · the pond page in a WebView, shared by the app window and the live wallpaper.
 // Every pond page in the process is registered here: when one saves, the save is handed to the others,
 // so a koi named in the app is named on the home screen a moment later.
 package com.skypond.koipond;
@@ -68,7 +68,7 @@ final class PondWeb {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try { context.startActivity(pick); return; } catch (Exception ignored) { }
         try { context.startActivity(new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); return; } catch (Exception ignored) { }
-        Toast.makeText(context, "请在系统「壁纸」设置中选择动态壁纸「碧池观鱼」", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "请在系统「壁纸」设置中选择动态壁纸「半亩方塘」", Toast.LENGTH_LONG).show();
     }
 
     /** window.PondHost in the page. Calls arrive on a WebView thread; everything is done on the main thread. */

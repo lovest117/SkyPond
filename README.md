@@ -3,15 +3,14 @@
 <h1 align="center">半亩方塘</h1>
 
 <p align="center">半亩方塘作桌面：锦鲤悠游、云影掠过、雨打荷叶，轻点一下就来抢食。<br>
-macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运行。</p>
+Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运行。</p>
 
-<p align="center"><a href="https://github.com/lovest117/fishwallpaper/releases/latest"><b>⬇ 下载最新版本</b></a></p>
+<p align="center"><a href="https://github.com/lovest117/SkyPond/releases/latest"><b>⬇ 下载最新版本</b></a></p>
 
-![macOS 桌面上的晴日池塘](docs/screenshots/macos-sunny.jpg)
+![晴日池塘](docs/screenshots/web-sunny.jpg)
 
-| 多云：云影移过，遮住处变暗、移走后阳光和焦散回来 | 雨天：荷叶积水、水珠、雨雾与涟漪 |
+| 雨中荷叶特写 | 鱼影 |
 | --- | --- |
-| ![多云](docs/screenshots/macos-cloudy.jpg) | ![下雨](docs/screenshots/macos-rain.jpg) |
 | ![雨中荷叶特写](docs/screenshots/rain-lotus.jpg) | ![鱼影](docs/screenshots/fish-shadows.jpg) |
 | 雨中荷叶：叶心积起的一汪雨水、珠状水滴 | 晴天：鱼和乌龟在池底投下青绿色的影子 |
 
@@ -25,16 +24,15 @@ macOS · Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engin
 
 ## 下载
 
-在 [Releases](https://github.com/lovest117/fishwallpaper/releases/latest) 获取对应平台的文件：
+在 [Releases](https://github.com/lovest117/SkyPond/releases/latest) 获取对应平台的文件：
 
 | 平台 | 预编译包 / 获取方式 | 说明 |
 | --- | --- | --- |
 | Windows 10 / 11 | `SkyPond-<版本>-Windows.zip`（Release 已提供） | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
-| macOS 12+ | 暂未提供预编译包，需自行构建 | 只能在 macOS 上运行 `scripts/build-macos.sh`，构建与使用见下方「macOS 动态壁纸应用」 |
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | 直接使用源码，无需下载包 | 本地 `npm run dev` 启动，或双击 `index.html`；Wallpaper Engine 导入包含 `project.json` 的目录 |
 
-> 当前 Release（v1.1.0）已提供 Windows 与 Android 预编译包。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图；macOS 仍需在 Mac 上自行构建，且原生壳尚未改名、构建产物保留旧标识（详见各章节说明）。
+> 当前 Release（v1.1.0）已提供 Windows 与 Android 预编译包。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
@@ -100,7 +98,7 @@ npm run build
 
 已经接入 `wallpaperPropertyListener`，支持宿主暂停与天气、雨量、雪量、速度、界面显隐、声音开关、水声开关与种类、天气环境音、禅意音乐和总音量属性。自定义属性定义在 `project.json`；若导入向导新建了项目配置，可在编辑器「更改项目设置」中重新添加 `weather`、`rainamount`、`snowamount`、`speed`、`showui`、`sound`、`water`、`watertype`、`weathersound`、`music`、`volume` 属性。
 
-Wallpaper Engine 版本未在 Windows 宿主内运行验证。macOS 请使用下方的原生桌面壁纸应用，它不会改动系统壁纸设置，退出后桌面即恢复原样。
+Wallpaper Engine 版本未在 Windows 宿主内运行验证。
 
 ## 检查与构建
 
@@ -111,7 +109,7 @@ npm run build
 
 测试覆盖：追食和单次记账、食物落在身下也能吃到、长时间边界稳定性、游动姿态与体长、受惊逃离、避开荷叶、鱼食上限与过期、天气映射、异常存档清洗、手绘花纹持久化、纯红花色存档与像素颜色、青鲢混游与体形、各天气画面参数一致与云量、雨打荷叶的水花与颤动回稳、大雨闪电与雷声事件。
 
-`npm run build` 只替换 `dist/` 中的网页文件，不会删除其中的 macOS 应用、磁盘映像和 APK。
+`npm run build` 只替换 `dist/` 中的网页文件，不会删除其中的 APK 等打包产物。
 
 主要文件：
 
@@ -142,42 +140,13 @@ gh auth login              # 首次使用时登录
 
 壁纸宿主接入参考：[Wallpaper Engine 官方文档](https://docs.wallpaperengine.io/en/web/api/propertylistener.html)。
 
-## macOS 动态壁纸应用
-
-> **状态说明**：当前 Release 未提供 macOS 预编译包，需在 macOS 上自行构建。`scripts/build-macos.sh` 为 zsh 脚本，依赖 Swift 编译器及 sips、iconutil、codesign、lipo、hdiutil 等 Apple 专属工具，**无法在 Windows / Linux 上构建**。
-
-**构建前提**：macOS 12 及以上，安装 Xcode 或 Command Line Tools（提供 `swiftc`）。
-
-```sh
-./scripts/build-macos.sh
-```
-
-生成 `dist/碧池观鱼.app`（约 4MB）和可拖拽安装的 `dist/碧池观鱼-<版本>.dmg`（原生壳版本 1.2.1），支持 macOS 12 及以上。工具链仍能链接 Intel 时生成通用二进制（arm64 + x86_64）；较新的 macOS SDK 已不含 x86_64 的 Swift 运行库，则只产出 Apple 芯片（arm64）版本。应用为临时（ad-hoc）签名，首次在其他 Mac 上打开时需右键 →「打开」。
-
-**命名与资源现状**：macOS 原生壳（`native/macos/Info.plist`、`main.swift`）尚未做品牌改名，仍使用「碧池观鱼 / BichiPond / com.bichi.koipond」标识，因此构建出的 app、dmg 文件名与署名会保留旧名；其内加载的网页内容已是新版（含 19 联诗句等）。此外当前构建脚本只打包 `pond.jpg`，未拷贝四季背景图，macOS 版暂不显示四季切换图片。
-
-双击打开后，池塘即铺满每块屏幕的桌面背景层——位于系统壁纸上、桌面图标下，不影响正常使用桌面；多显示器与空间切换均支持。
-
-壁纸上的底栏、天气卡可以直接点击。访达的桌面窗口（放桌面图标、拖选框的那一层）盖在壁纸之上，会截走所有点击，所以应用在普通窗口之下、桌面图标之上另放一层透明的“点击层”：鼠标移到池塘的控件上时它才接住点击并转交给壁纸，移开后点击照常落到桌面、图标和小组件上。打开面板（我的锦鲤、天气、设置等）时，壁纸整体升到桌面图标之上并接收键盘，起名、查城市可正常输入（含中文输入法）；关闭面板后回到桌面层。
-
-菜单栏 🐟 图标：
-
-- 打开交互窗口（⌘I）：完整的池塘窗口，打开期间应用出现在程序坞与 ⌘-Tab 中，支持 ⌘C / ⌘V / ⌘A / ⌘W。
-- 天气：晴日、多云、下雨、落雪、月下观鱼，当前天气带勾选。
-- 暂停壁纸动画（⌘P）：省电；显示器睡眠或切换到其他用户时也会自动暂停。
-- 重载桌面壁纸（⌘R）、登录时启动（macOS 13+）、退出。
-
-所有窗口（每块屏幕的壁纸与交互窗口）实时同步：在任一处改名、添加或放生锦鲤、切换天气与声音设置，其他窗口立即跟随，以最近一次修改为准；进食数量取各窗口中的较大值。底部控制栏会自动避让程序坞高度。
-
-自检：`BICHI_SELFTEST=<输出目录> "dist/碧池观鱼.app/Contents/MacOS/BichiPond"`（路径与构建产物名一致）会自动走一遍菜单操作（打开交互窗口、切换天气、改名同步、暂停与恢复、关闭窗口），逐项输出 PASS / FAIL 与帧率，把各阶段的壁纸截图存入该目录，完成后恢复原设置并退出。
-
 ## Windows 桌面动态壁纸
 
 ```sh
 ./scripts/build-windows.sh
 ```
 
-生成 `dist/SkyPond-<版本>-Windows.zip`（约 4.2MB，当前 1.1.0）。需要 .NET SDK 8 或更高版本（可在 macOS / Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
+生成 `dist/SkyPond-<版本>-Windows.zip`（约 4.2MB，当前 1.1.0）。需要 .NET SDK 8 或更高版本（可在 Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。图标默认沿用仓库内的 `native/windows/AppIcon.ico`（环境里有 `sips` 时会按 `assets/app-icon.png` 重新生成），不影响出包。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
 
 使用：解压整个文件夹，双击 `SkyPond.exe`。池塘铺满每块屏幕的桌面背景，位于桌面图标之下（兼容 Windows 11 24H2 起改变的桌面层结构），不影响正常使用桌面。
 
@@ -191,13 +160,12 @@ gh auth login              # 首次使用时登录
 
 ## 安卓动态壁纸（APK）
 
-> **状态说明**：Release 已提供签名好的 `SkyPond-<版本>-Android.apk`，可直接下载安装；也可自行构建。Linux 用 `scripts/build-android-linux.sh`（bash），macOS 用 `scripts/build-android.sh`（zsh），两者都调用 aapt2、d8、zipalign、apksigner 等 Android 构建工具，需一次性准备好工具链（见脚本头部注释）。
+> **状态说明**：Release 已提供签名好的 `SkyPond-<版本>-Android.apk`，可直接下载安装；也可自行构建。构建脚本 `scripts/build-android-linux.sh`（bash）调用 aapt2、d8、zipalign、apksigner 等 Android 构建工具，需一次性准备好工具链（见脚本头部注释）。
 
 **构建前提**：JDK 17、Android Build Tools r34、Platform 34（默认置于 `~/android-build`，可用环境变量 `ANDROID_BUILD` 覆盖）；最低支持 Android 7.0（API 24），目标 SDK 34。
 
 ```sh
-./scripts/build-android-linux.sh   # Linux
-./scripts/build-android.sh         # macOS
+./scripts/build-android-linux.sh
 ```
 
 生成 `android/build/SkyPond-1.1.0-Android.apk` 并复制到 `dist/`（约 4.2MB，版本 1.1.0 / versionCode 5）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
