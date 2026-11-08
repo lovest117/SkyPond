@@ -8,5 +8,6 @@ native/windows/bin/
 native/windows/obj/
 # Local tools and system files
 .claude/
+.wrangler/
 node_modules/
 .DS_Store

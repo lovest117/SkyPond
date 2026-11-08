@@ -3,7 +3,7 @@ import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
 await import('./embed.mjs');
 // Replace only the web files; dist/ also holds the Android APK and other packaged output.
-const files=['index.html','style.css','core.js','art.js','gl.js','scene.js','audio.js','app.js','project.json','assets/pond.webp','assets/pond-spring.webp','assets/pond-summer.webp','assets/pond-autumn.webp','assets/pond-winter.webp','assets/pond-data.js','assets/preview.jpg','assets/favicon.svg','assets/ARTWORK.md'];
+const files=['index.html','style.css','core.js','art.js','gl.js','scene.js','now.js','audio.js','app.js','project.json','_headers','assets/pond.webp','assets/pond-spring.webp','assets/pond-summer.webp','assets/pond-autumn.webp','assets/pond-winter.webp','assets/pond-data.js','assets/preview.jpg','assets/favicon.svg','assets/ARTWORK.md'];
 for(const file of files)await rm(`${root}dist/${file}`,{force:true});
 await mkdir(`${root}dist/assets`,{recursive:true});
 for(const file of files)await cp(`${root}${file}`,`${root}dist/${file}`);
