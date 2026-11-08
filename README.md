@@ -30,13 +30,13 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 | --- | --- | --- |
 | Windows 10 / 11 | `SkyPond-<版本>-Windows.zip`（Release 已提供） | 解压整个文件夹，运行 `SkyPond.exe`；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
-| 浏览器 / Wallpaper Engine | 直接使用源码，无需下载包 | 本地 `npm run dev` 启动，或双击 `index.html`；Wallpaper Engine 导入包含 `project.json` 的目录 |
+| 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip`（Release 已提供），也可直接用源码 | 解压后打开 `index.html`，或导入含 `project.json` 的目录；本地也可 `npm run dev` |
 
 > 当前 Release（v1.1.0）已提供 Windows 与 Android 预编译包。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 
-> 本作品根据开源项目「碧池观鱼」二次创作，独立复刻，非原作者官方版本；画面、代码与声音均为独立制作（见文末「素材与服务」）。
+> 本作品基于开源项目「碧池观鱼」（[moli-xia/fishwallpaper](https://github.com/moli-xia/fishwallpaper)）二次创作：沿用其代码与素材，做了改名、平台调整与功能增补，非原作者官方版本。上游未声明开源许可证，本仓库不另外授予许可，引用或分发前请先联系原作者。
 
 ## 本地运行与开发
 
@@ -103,6 +103,7 @@ Wallpaper Engine 版本未在 Windows 宿主内运行验证。
 ## 检查与构建
 
 ```sh
+node scripts/version.mjs check   # 版本号一致性，以 version.json 为唯一来源
 npm test
 npm run build
 ```
@@ -121,7 +122,7 @@ npm run build
 | `scene.js` | 乌龟、蝴蝶、蜻蜓、萤火虫、花瓣、雨雪与天气光照，锦鲤的鳍和阴影；底图中浮于水面之物的标注与遮罩 |
 | `audio.js` | 环境声、禅意音乐与互动水声的合成与调度 |
 | `app.js` | 界面、面板、天气服务、主循环 |
-| `assets/pond.jpg` | 池塘底图；`assets/pond-data.js` 是同一张图的内嵌版本，由 `scripts/embed.mjs` 生成，让直接双击打开时 WebGL 也能读取 |
+| `assets/pond.webp` | 池塘底图（WebP，质量 82）；`assets/pond-data.js` 是同一张图的内嵌版本，由 `scripts/embed.mjs` 生成，让直接双击打开时 WebGL 也能读取 |
 
 更换底图后运行 `npm run build`（或 `node scripts/embed.mjs`）重新生成内嵌版本。
 
@@ -134,7 +135,7 @@ gh auth login              # 首次使用时登录
 
 ## 素材与服务
 
-池塘底图使用内置 imagegen 生成（`assets/pond.png` 为原图，`pond.jpg` 为压缩后的运行版本）；锦鲤、小乌龟、蝴蝶、蜻蜓、水波、焦散与雨雪均由代码绘制，所有声音由代码合成。更换底图时需同步修改 `scene.js` 中 `FLOATERS` 的荷叶与荷花标注。没有提取原视频的图片、代码或音频。生成提示词见 [assets/ARTWORK.md](assets/ARTWORK.md)。本项目为独立复刻，非原作者官方版本，画面素材与部分布局存在差异。
+池塘底图使用内置 imagegen 生成（`assets/pond.png` 为原图，`pond.webp` 为压缩后的运行版本，四季背景同理）；锦鲤、小乌龟、蝴蝶、蜻蜓、水波、焦散与雨雪均由代码绘制，所有声音由代码合成。更换底图时需同步修改 `scene.js` 中 `FLOATERS` 的荷叶与荷花标注。没有提取原视频的图片、代码或音频。生成提示词见 [assets/ARTWORK.md](assets/ARTWORK.md)。本项目基于开源项目「碧池观鱼」二次创作，画面素材与部分布局与原作存在差异。
 
 天气服务：[Open-Meteo](https://open-meteo.com/)，[地理编码文档](https://open-meteo.com/en/docs/geocoding-api)。公共免费接口主要面向非商业使用，商业发布前请按其现行条款配置服务。
 
@@ -146,7 +147,7 @@ gh auth login              # 首次使用时登录
 ./scripts/build-windows.sh
 ```
 
-生成 `dist/SkyPond-<版本>-Windows.zip`（约 4.2MB，当前 1.1.0）。需要 .NET SDK 8 或更高版本（可在 Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。图标默认沿用仓库内的 `native/windows/AppIcon.ico`（环境里有 `sips` 时会按 `assets/app-icon.png` 重新生成），不影响出包。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
+生成 `dist/SkyPond-<版本>-Windows.zip`（版本号取自 `version.json`）。需要 .NET SDK 8 或更高版本（可在 Linux 上构建；本机装在 `~/.dotnet`，或用 `DOTNET` 指定路径）。图标默认沿用仓库内的 `native/windows/AppIcon.ico`（环境里有 `sips` 时会按 `assets/app-icon.png` 重新生成），不影响出包。程序基于 .NET Framework 4.8 与 WebView2（Edge 内核），二者都是 Windows 10 / 11 自带，用户无需另外安装任何东西；若 Windows 10 缺少 WebView2，程序会提示并打开下载页。
 
 使用：解压整个文件夹，双击 `SkyPond.exe`。池塘铺满每块屏幕的桌面背景，位于桌面图标之下（兼容 Windows 11 24H2 起改变的桌面层结构），不影响正常使用桌面。
 
@@ -168,9 +169,9 @@ gh auth login              # 首次使用时登录
 ./scripts/build-android-linux.sh
 ```
 
-生成 `android/build/SkyPond-1.1.0-Android.apk` 并复制到 `dist/`（约 4.2MB，版本 1.1.0 / versionCode 5）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
+生成 `android/build/SkyPond-<版本>-Android.apk` 并复制到 `dist/`（版本名与 versionCode 取自 `version.json`）。脚本每次都从当前网页源码重新拷贝资源，并沿用同一把签名密钥，新版本可直接覆盖安装，池塘里的锦鲤和设置都会保留。
 
-**命名与资源现状**：Android 原生壳已完成品牌改名，包名 `com.skypond.koipond`、应用名「半亩方塘」、版本 1.1.0，签名密钥 CN=SkyPond；构建脚本会把 `pond.jpg` 与春、夏、秋、冬四张四季背景图一并打包，Android 版可正常切换四季图片。
+**命名与资源现状**：Android 原生壳已完成品牌改名，包名 `com.skypond.koipond`、应用名「半亩方塘」，签名密钥 CN=SkyPond；构建脚本会把 `pond.webp` 与春、夏、秋、冬四张四季背景图一并打包，Android 版可正常切换四季图片。
 
 这是**手机桌面的动态壁纸**：池塘就在主屏幕（及系统允许时的锁屏）背景里游动，应用图标和小部件浮在水面上。
 

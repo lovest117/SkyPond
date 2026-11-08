@@ -4,8 +4,12 @@
 # The app targets .NET Framework 4.8 and WebView2, both already part of Windows 10/11, so nothing else is installed.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+command -v node >/dev/null 2>&1 || { echo "✗ node not found — version.json 需要 node 读取"; exit 1; }
 DOTNET="${DOTNET:-$(command -v dotnet || echo "$HOME/.dotnet/dotnet")}"
-VERSION="1.1.0"
+# 版本号只有 version.json 一处来源，这里读出来注入编译参数。
+VERSION="$(node "$ROOT/scripts/version.mjs" version)"
+FILE_VERSION="$(node "$ROOT/scripts/version.mjs" windows.fileVersion)"
+MANIFEST_VERSION="$(node "$ROOT/scripts/version.mjs" windows.manifestVersion)"
 PROJ="$ROOT/native/windows"
 OUT="$ROOT/build/windows/SkyPond"
 ZIP="$ROOT/dist/SkyPond-$VERSION-Windows.zip"
@@ -37,8 +41,11 @@ echo "▸ sips not found — reusing $PROJ/AppIcon.ico"
 fi
 
 echo "▸ Building (.NET Framework 4.8 + WebView2)…"
+# 清单里的 assemblyIdentity 版本在临时副本里替换，仓库里的 app.manifest 保持可读的兜底值。
+sed "s/<assemblyIdentity version=\"[^\"]*\"/<assemblyIdentity version=\"$MANIFEST_VERSION\"/" "$PROJ/app.manifest" > "$WORK/app.manifest"
 rm -rf "$OUT"
-"$DOTNET" publish "$PROJ/SkyPond.csproj" -c Release -o "$OUT" --nologo -v quiet
+"$DOTNET" publish "$PROJ/SkyPond.csproj" -c Release -o "$OUT" --nologo -v quiet \
+  -p:Version="$VERSION" -p:FileVersion="$FILE_VERSION" -p:AssemblyVersion="$VERSION" -p:ApplicationManifest="$WORK/app.manifest"
 rm -f "$OUT"/*.pdb "$OUT"/*.xml
 # Only the WebView2 loaders Windows can use: x64, x86 and ARM64.
 if [[ -d "$OUT/runtimes" ]]; then

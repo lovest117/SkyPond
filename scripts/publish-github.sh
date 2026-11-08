@@ -5,7 +5,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REPO="${REPO:-lovest117/SkyPond}"
-VERSION="${VERSION:-1.1.0}"
+VERSION="${VERSION:-$(node "$ROOT/scripts/version.mjs" version)}"
 GH="${GH:-$(command -v gh || true)}"
 [[ -n "$GH" ]] || { echo "GitHub CLI not found: https://cli.github.com (or set GH=/path/to/gh)"; exit 1; }
 "$GH" auth status >/dev/null 2>&1 || { echo "Sign in first:  gh auth login"; exit 1; }

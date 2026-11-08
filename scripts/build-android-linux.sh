@@ -10,8 +10,8 @@ SDK_ROOT="${ANDROID_BUILD:-$HOME/android-build}"
 export JAVA_HOME="$SDK_ROOT/jdk"
 BT="$SDK_ROOT/sdk/build-tools/34.0.0"
 AJ="$SDK_ROOT/sdk/platforms/android-34/android.jar"
-VERSION_NAME="1.1.0"
-VERSION_CODE=5
+VERSION_NAME="$(node "$ROOT/scripts/version.mjs" android.versionName)"
+VERSION_CODE="$(node "$ROOT/scripts/version.mjs" android.versionCode)"
 OUT="SkyPond-${VERSION_NAME}-Android.apk"
 export PATH="$JAVA_HOME/bin:$PATH"
 cd "$ROOT/android"
@@ -19,7 +19,7 @@ cd "$ROOT/android"
 # Package the current pond, never a stale copy: assets/ is rebuilt from the web sources every time.
 rm -rf assets && mkdir -p assets/assets
 for f in index.html app.js core.js art.js gl.js scene.js audio.js style.css; do cp "$ROOT/$f" assets/; done
-for img in pond.jpg pond-spring.jpg pond-summer.jpg pond-autumn.jpg pond-winter.jpg; do cp "$ROOT/assets/$img" assets/assets/; done
+for img in pond.webp pond-spring.webp pond-summer.webp pond-autumn.webp pond-winter.webp; do cp "$ROOT/assets/$img" assets/assets/; done
 cp "$ROOT/assets/pond-data.js" "$ROOT/assets/favicon.svg" assets/assets/
 
 # Keep the signing key between builds, so a new APK installs over the old one without losing the pond.

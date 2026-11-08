@@ -6,7 +6,7 @@
   const TAU = Math.PI * 2;
   const rgb = h => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
 
-  // Things above the water in the painted pond (assets/pond.jpg, 1672×941), fitted to the painting's edges:
+  // Things above the water in the painted pond (assets/pond.webp, 1672×941), fitted to the painting's edges:
   // [x, y, rx, kind, ry, rotation]; l = lotus/pennywort leaf, f = flower or petal, b = lotus bud, r = rock breaking the surface.
   const FLOATERS = [[1419,10,73,'l'],[1450,120,60,'l',52],[1504,231,55,'l',45],[1609,267,66,'l'],[1645,452,66,'l',64],[1565,147,48,'f',40],[1538,41,17,'b',22],[1579,395,30,'f',26],[1635,351,14,'b',17],[1398,202,14,'f',20,-.3],[1550,503,21,'f',13,.35],
     [1352,161,18,'l'],[1373,131,16,'l'],[1310,103,15,'l'],[1284,121,14,'l'],[1311,148,13,'l'],[1332,39,14,'l'],[1293,11,10,'l'],[1503,52,15,'l'],[1539,83,28,'l'],[1513,139,13,'l'],[1628,201,22,'l'],[1657,183,13,'l'],[1653,217,17,'l'],[1518,289,15,'l'],[1526,299,14,'l'],[1544,318,14,'l'],[1503,339,17,'l'],[1534,356,15,'l'],[1471,363,19,'l'],[1508,377,18,'l'],[1523,413,18,'l'],[1654,376,17,'l'],[1663,322,12,'l'],[1570,539,15,'l'],[1596,529,14,'l'],[1586,567,12,'l'],

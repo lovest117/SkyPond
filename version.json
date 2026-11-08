@@ -1,0 +1,11 @@
+{
+  "version": "1.1.0",
+  "android": {
+    "versionName": "1.1.0",
+    "versionCode": 5
+  },
+  "windows": {
+    "fileVersion": "1.1.0.0",
+    "manifestVersion": "1.1.0.0"
+  }
+}

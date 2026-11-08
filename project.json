@@ -1,9 +1,9 @@
 {
   "title": "半亩方塘 · Koi Pond",
-  "description": "俯视锦鲤池塘，点击投喂，晴雨雪天气，锦鲤命名与食量排行。独立复刻。",
+  "description": "俯视锦鲤池塘，点击投喂，晴雨雪天气，锦鲤命名与食量排行。基于开源项目「碧池观鱼」二次创作。",
   "type": "web",
   "file": "index.html",
-  "preview": "assets/pond.jpg",
+  "preview": "assets/preview.jpg",
   "general": {
     "properties": {
       "weather": {
