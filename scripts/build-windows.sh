@@ -55,9 +55,14 @@ fi
 cat > "$OUT/README.txt" <<'TXT'
 半亩方塘 · Windows 桌面动态壁纸
 
-使用：解压整个文件夹（不要只拿出 exe），双击 SkyPond.exe，池塘即铺满每块屏幕的桌面背景，
-位于桌面图标之下，不影响正常使用桌面。
+三步装好
+1. 把整个 zip 解压成一个文件夹（不要只把 exe 或某个文件单独拿出来）
+2. 双击「0-点我启动.bat」；也可以直接双击 SkyPond.exe
+3. 首次运行时 Windows 可能提示“已保护你的电脑”，这是未签名程序的正常提示，
+   点“更多信息 → 仍要运行”即可。介意的可以先用 Release 里的 SHA256SUMS.txt 核对文件再运行。
 
+用法
+· 池塘铺满每块屏幕的桌面背景，位于桌面图标之下，不影响正常使用桌面。
 · 在桌面空白处轻点一下：锦鲤游过来抢食。
 · 任务栏通知区域的锦鲤图标（右键）：打开交互窗口（投喂、给锦鲤起名、天气、声音、设置）、
   切换天气与月下观鱼、暂停壁纸动画、重载、开机时启动、退出。双击图标也可打开交互窗口。
@@ -65,11 +70,20 @@ cat > "$OUT/README.txt" <<'TXT'
 · 退出后桌面恢复为原来的系统壁纸。
 
 要求：Windows 10 / 11，Microsoft Edge WebView2 运行时（Windows 11 自带；Windows 10 若缺少，
-程序会提示并打开下载页）。首次运行时 Windows 可能提示“已保护你的电脑”，点“更多信息 → 仍要运行”。
-数据保存在 %LOCALAPPDATA%\SkyPond。
+程序会提示并打开下载页）。数据保存在 %LOCALAPPDATA%\SkyPond。
 TXT
 # Notepad reads UTF-8 without a BOM fine on Windows 10 1903+, but a BOM keeps older builds from guessing wrong.
 printf '\xEF\xBB\xBF' | cat - "$OUT/README.txt" > "$WORK/readme" && mv "$WORK/readme" "$OUT/README.txt"
+
+# 小白入口：双击就能开，找不到 exe 时给出“整个文件夹一起解压”的提示。
+# 不做 Zone.Identifier 解锁——那是绕过系统安全提示，交给人自己判断。
+python3 - "$PROJ/0-点我启动.bat" "$OUT/0-点我启动.bat" <<'PY'
+import sys
+src, dst = sys.argv[1], sys.argv[2]
+text = open(src, encoding='utf-8').read().replace('\r\n', '\n')
+# cmd 解析 .bat 用 CRLF 最稳妥，仓库里存的是 LF 也不怕。
+open(dst, 'w', encoding='utf-8', newline='').write(text.replace('\n', '\r\n'))
+PY
 
 echo "▸ Packing…"
 mkdir -p "$ROOT/dist"
