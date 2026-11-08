@@ -51,6 +51,13 @@
     const month = 29.530588853, age = (((date - Date.UTC(2000, 0, 6, 18, 14)) / 864e5) % month + month) % month, angle = age / month * TAU;
     return { age, angle, illum: (1 - Math.cos(angle)) / 2, name: ['新月', '蛾眉月', '上弦月', '盈凸月', '满月', '亏凸月', '下弦月', '残月'][Math.round(age / month * 8) % 8] };
   }
+  // Three phases you can pick in the panel; an unknown value falls back to tonight's real age.
+  const MOON_PRESETS = { new: .8, quarter: Math.PI / 2, full: Math.PI };
+  const MOON_LABELS = { new: '新月', quarter: '弦月', full: '满月' };
+  function moonAngle(preset, date = new Date()) {
+    const angle = MOON_PRESETS[preset];
+    return Number.isFinite(angle) ? angle : moonPhase(date).angle;
+  }
   function lerpLook(a, b, t) { for (const k in b) { if (Array.isArray(b[k])) for (let i = 0; i < b[k].length; i++) a[k][i] += (b[k][i] - a[k][i]) * t; else a[k] += (b[k] - a[k]) * t; } }
 
   class Turtle {
@@ -368,7 +375,7 @@
     update(dt, settings) {
       this.time += dt;
       if (this.time - this.phaseAt > 60 || !this.moonDisc) { this.phaseAt = this.time; this.phase = moonPhase(); }
-      this.moonDisc = [this.moonAt[0], this.h - this.moonAt[1], 26 * this.scale, this.phase.angle];
+      this.moonDisc = [this.moonAt[0], this.h - this.moonAt[1], 26 * this.scale, moonAngle(settings.moonPhase)];
       const rainK = clamp(settings.rainAmount ?? .5, 0, 1), snowK = clamp(settings.snowAmount ?? .5, 0, 1);
       // Snow settles on leaves, flowers and rocks while it falls and melts away after.
       this.snowCover = settings.weather === 'snow' ? Math.min(snowK * .9, (this.snowCover || 0) + dt * (.004 + .02 * snowK)) : Math.max(0, (this.snowCover || 0) - dt * .012);
@@ -564,5 +571,5 @@
     ctx.globalAlpha = 1;
     root.PondGL.drawStrip2D(ctx, sprite, pose, s, x, y, 1);
   }
-  root.PondScene = { PondScene, drawKoi2D, lookFor, floatMask, moonPhase };
+  root.PondScene = { PondScene, drawKoi2D, lookFor, floatMask, moonPhase, moonAngle, MOON_PRESETS, MOON_LABELS };
 })(window);

@@ -6,7 +6,7 @@ const core = require('../core.js');
 const context = { window: { PondCore: core }, ImageData: class { constructor(w, h) { this.width = w; this.height = h; this.data = new Uint8ClampedArray(w * h * 4); } } };
 vm.runInNewContext(fs.readFileSync(require.resolve('../art.js'), 'utf8'), context);
 vm.runInNewContext(fs.readFileSync(require.resolve('../scene.js'), 'utf8'), context);
-const { PondScene, lookFor } = context.window.PondScene;
+const { PondScene, lookFor, moonAngle, MOON_PRESETS, MOON_LABELS } = context.window.PondScene;
 
 // A stand-in renderer: the painting maps 1:1 onto a 1672×941 screen.
 function pond(seed = 7) {
@@ -37,6 +37,28 @@ test('雨点打在荷叶、花苞上会溅起水花并让它们颤动，雨停�
   for (let i = 0; i < 600; i++) scene.update(1 / 30, { ...base, weather: 'sunny' });
   assert.ok(scene.floaters.every(f => Math.abs(f.ja) < .01 && Math.abs(f.ox) < .05 && Math.abs(f.oy) < .05));
   assert.equal(scene.splashes.length, 0);
+});
+
+test('月相三档：新月细弧、弦月半轮、满月全轮，未知值回落到真实月龄', () => {
+  const illum = a => (1 - Math.cos(a)) / 2;
+  assert.deepEqual(Object.keys(MOON_PRESETS).sort(), ['full', 'new', 'quarter']);
+  assert.equal(JSON.stringify(MOON_LABELS), JSON.stringify({ new: '新月', quarter: '弦月', full: '满月' }));
+  assert.ok(Math.abs(illum(MOON_PRESETS.quarter) - .5) < 1e-4, '弦月亮面一半');
+  assert.equal(MOON_PRESETS.full, Math.PI);
+  const newMoon = illum(MOON_PRESETS.new);
+  assert.ok(newMoon > .1 && newMoon < .2, `新月约一成多亮面（${newMoon.toFixed(3)}）`);
+  assert.ok(MOON_PRESETS.new < MOON_PRESETS.quarter, '新月比弦月细');
+  assert.ok(moonAngle('off-topic') >= 0 && moonAngle('off-topic') < Math.PI * 2, '未知月相按真实月龄');
+});
+
+test('场景把选定的月相写进池中倒影，切换后即时生效', () => {
+  const scene = pond();
+  for (const p of ['new', 'quarter', 'full']) {
+    scene.update(1 / 30, { ...base, night: true, moonPhase: p });
+    assert.equal(scene.moonDisc[3], MOON_PRESETS[p], `${MOON_LABELS[p]}的角度进了倒影参数`);
+  }
+  scene.update(1 / 30, { ...base, night: false });
+  assert.ok(scene.moonDisc[3] >= 0 && scene.moonDisc[3] < Math.PI * 2, '没有设置时按当日真实月龄');
 });
 
 test('大雨偶有闪电，闪光后发出雷声事件；小雨与晴天没有', () => {
