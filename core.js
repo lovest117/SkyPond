@@ -22,6 +22,40 @@
     const names = ['锦时','小满','丹朱','听雨','白露','金盏','青禾','望舒','知秋','浮玉','映月','点绛','云游','春水','琥珀','松墨','桃夭','长安','涟漪','拾光','朝露','小暑','如意','团团'];
     return { id: `koi-${Date.now()}-${index}`, name: names[index % names.length], palette: index % PALETTES.length, size: .62 + random() * .4, seed: Math.floor(random()*100000), eaten: 0, x: .17 + random()*.66, y: .18+random()*.62, angle: random()*TAU, phase: random()*10, speed: .85+random()*.3, target: null };
   }
+  // 池塘容量：锦鲤最多 60 尾，超出的先在岸边排队（queue），腾出位置再游进来。
+  const POND_CAP = 60, QUEUE_CAP = 20;
+  // 苗期：喂满 GROW_DAYS 个不同日子后成年。苗期体长是成年体长的 FRY_SCALE 起，按天数线性长到 1。
+  const GROW_DAYS = 7, FRY_SCALE = .62, MIN_FRY_SIZE = .25;
+  function localDayKey(date) { const d = date || new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  const adultSizeOf = f => clamp(Number(f.adultSize) || Number(f.size) || .9, .45, 1.5);
+  function frySize(adultSize, days) { const a = clamp(Number(adultSize) || .9, .45, 1.5), n = clamp(Number(days) || 0, 0, GROW_DAYS); return a * (FRY_SCALE + (1 - FRY_SCALE) * n / GROW_DAYS); }
+  // 给一尾鱼记一次「这一天喂到了」；同一天重复喂不加速成长。返回本次是否发生了变化。
+  function growOnFeed(f, key) {
+    if (!f || !f.fry) return false;
+    const k = typeof key === 'string' && key.length === 10 ? key : localDayKey();
+    if (!Array.isArray(f.fedDates)) f.fedDates = [];
+    if (f.fedDates.includes(k)) return false;
+    f.fedDates.push(k);
+    if (f.fedDates.length >= GROW_DAYS) { f.fry = false; f.size = adultSizeOf(f); }
+    else f.size = frySize(f.adultSize, f.fedDates.length);
+    return true;
+  }
+  // { adult, days, progress }: 面板与测试都从这里读阶段，不再各自推断。
+  function growthStage(f) {
+    if (!f || !f.fry) return { adult: true, days: GROW_DAYS, progress: 1 };
+    const days = Math.min(GROW_DAYS, Array.isArray(f.fedDates) ? f.fedDates.length : 0);
+    return { adult: false, days, progress: days / GROW_DAYS };
+  }
+  // 一尾苗期的鱼：体长从 FRY_SCALE 起，数据与成年鱼同构（fry/fedDates/adultSize）。
+  function createFry(index, random = Math.random, adultSize = .9) {
+    const a = clamp(Number(adultSize) || .9, .45, 1.5);
+    return { ...createFish(index, random), adultSize: a, fry: true, fedDates: [], size: frySize(a, 0) };
+  }
+  // 岸边排队：room 个空位放走队首，返回进场名单与剩下的队列（纯函数，便于测试）。
+  function queueDrain(queue, room) {
+    const q = Array.isArray(queue) ? queue : [], n = Math.max(0, Math.min(Math.floor(room) || 0, q.length));
+    return { entered: q.slice(0, n), rest: q.slice(n) };
+  }
   // Resident shoal is separate from the saved koi collection and its 60-fish limit.
   function createSilverCarpShoal(random = Math.random) {
     return Array.from({ length: 4 }, (_, i) => ({
@@ -76,7 +110,7 @@
     return out;
   }
   class PondSimulation {
-    constructor(fish,width,height,random=Math.random,residents=[],residentsOn=true) { this.fish=fish; this.residents=residents; this.residentsOn=residentsOn; this.width=width; this.height=height; this.random=random; this.food=[]; this.totalEaten=0; this.scale=1; this.time=0; this.obstacles=[]; this.events=[]; }
+    constructor(fish,width,height,random=Math.random,residents=[],residentsOn=true,now=()=>Date.now()) { this.fish=fish; this.residents=residents; this.residentsOn=residentsOn; this.width=width; this.height=height; this.random=random; this.food=[]; this.totalEaten=0; this.scale=1; this.time=0; this.obstacles=[]; this.events=[]; this.now=now; }
     get allFish() { return this.residentsOn?this.fish.concat(this.residents):this.fish; }
     feed(x,y,count=9) {
       if(this.food.length >= 180) return false;
@@ -117,7 +151,7 @@
         // Food under the body can't be reached by pivoting; swim on to open a gap, then come back around.
         if(d<BODY.nose*s*1.15&&err>.6){gx=cos;gy=sin;want=.7*L;}
         turnGain=4.5;maxTurn=3.4;sepW=1.1;boundW=.8;f.depthGoal=.04;
-        if(fd<Math.max(6,7*s)){food.eaten=true;f.eaten++;this.totalEaten++;this.events.push({type:'eat',x:food.x,y:food.y,fish:f});}
+        if(fd<Math.max(6,7*s)){food.eaten=true;f.eaten++;this.totalEaten++;growOnFeed(f,localDayKey(new Date(this.now())));this.events.push({type:'eat',x:food.x,y:food.y,fish:f});}
       } else {
         f.goalTime-=dt;
         if(!f.goal||f.goalTime<=0||Math.hypot(f.goal.x*w-x,f.goal.y*h-y)<L*1.3)this.pickGoal(f);
@@ -162,15 +196,25 @@
       updateSpine(f,s,w,h);
     }
   }
+  function cleanMarks(marks){
+    return Array.isArray(marks)?marks.slice(0,400).filter(m=>m&&Number.isFinite(m.x)&&Number.isFinite(m.y)&&Number.isFinite(m.r)&&/^#[0-9a-f]{6}$/i.test(m.color)).map(m=>({x:clamp(m.x,-32,32),y:clamp(m.y,-16,16),r:clamp(m.r,1,8),color:m.color})):[];
+  }
+  // 一尾鱼的存档清洗：老存档没有 fry/adultSize/fedDates 的，一律按成年鱼处理，尺寸保持原样。
+  function cleanFish(f,i){
+    const defaults=createFish(i,randomSeed(i+8));
+    const adultSize=clamp(Number(f.adultSize)||Number(f.size)||.9,.45,1.5);
+    const fedDates=Array.isArray(f.fedDates)?[...new Set(f.fedDates.filter(k=>typeof k==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(k)).slice(-GROW_DAYS))].sort().slice(-GROW_DAYS):[];
+    const isFry=!!f.fry&&fedDates.length<GROW_DAYS;
+    return {...defaults,id:typeof f.id==='string'?f.id.slice(0,80):defaults.id,name:f.name.trim().slice(0,12)||defaults.name,palette:Number.isInteger(f.palette)?clamp(f.palette,0,PALETTES.length-1):0,size:isFry?Math.max(MIN_FRY_SIZE,frySize(adultSize,fedDates.length)):adultSize,seed:Number.isFinite(f.seed)?f.seed:defaults.seed,eaten:clamp(Math.floor(Number(f.eaten)||0),0,9999999),adultSize,fry:isFry,fedDates,marks:cleanMarks(f.marks)};
+  }
   function sanitizeSave(data) {
     if(!data||!Array.isArray(data.fish)||!data.fish.length) return null;
-    const fish=data.fish.slice(0,60).filter(f=>f&&typeof f.name==='string').map((f,i)=>{
-      const defaults=createFish(i,randomSeed(i+8));
-      return {...defaults,id:typeof f.id==='string'?f.id.slice(0,80):defaults.id,name:f.name.trim().slice(0,12)||defaults.name,palette:Number.isInteger(f.palette)?clamp(f.palette,0,PALETTES.length-1):0,size:clamp(Number(f.size)||.8,.45,1.5),seed:Number.isFinite(f.seed)?f.seed:defaults.seed,eaten:clamp(Math.floor(Number(f.eaten)||0),0,9999999),marks:Array.isArray(f.marks)?f.marks.slice(0,400).filter(m=>m&&Number.isFinite(m.x)&&Number.isFinite(m.y)&&Number.isFinite(m.r)&&/^#[0-9a-f]{6}$/i.test(m.color)).map(m=>({x:clamp(m.x,-32,32),y:clamp(m.y,-16,16),r:clamp(m.r,1,8),color:m.color})):[]};
-    });
-    return fish.length?{fish,settings:data.settings&&typeof data.settings==='object'?data.settings:{},daily:data.daily}:null;
+    const fish=data.fish.slice(0,POND_CAP).filter(f=>f&&typeof f.name==='string').map(cleanFish);
+    if(!fish.length) return null;
+    const queue=Array.isArray(data.queue)?data.queue.slice(0,QUEUE_CAP).filter(q=>q&&typeof q.name==='string').map(q=>({name:q.name.trim().slice(0,12)||'锦鲤',palette:Number.isInteger(q.palette)?clamp(q.palette,0,PALETTES.length-1):0,adultSize:clamp(Number(q.adultSize)||Number(q.size)||.9,.45,1.5),seed:Number.isFinite(q.seed)?q.seed:0,marks:cleanMarks(q.marks)})):[];
+    return {fish,queue,settings:data.settings&&typeof data.settings==='object'?data.settings:{},daily:data.daily};
   }
-  const api={PALETTES,SILVER_CARP,fishPalette,createSilverCarpShoal,BODY,randomSeed,weatherFromCode,clamp,wrap,createFish,updateSpine,fishPose,PondSimulation,sanitizeSave};
+  const api={PALETTES,SILVER_CARP,fishPalette,createSilverCarpShoal,BODY,randomSeed,weatherFromCode,clamp,wrap,createFish,POND_CAP,QUEUE_CAP,GROW_DAYS,FRY_SCALE,MIN_FRY_SIZE,localDayKey,frySize,growthStage,growOnFeed,createFry,queueDrain,updateSpine,fishPose,PondSimulation,sanitizeSave};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.PondCore=api;
 })(typeof window!=='undefined'?window:globalThis);

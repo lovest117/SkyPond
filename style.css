@@ -6,6 +6,7 @@
 
 .paint-tools{gap:10px}.paint-tools input[type=color]{width:24px;height:24px;padding:1px;border:1px solid #cbd4c0;border-radius:50%;background:none;cursor:pointer;margin-left:auto}.paint-tools .small-note{font-size:9px}#preview{touch-action:none}
 .fish-actions{display:flex;gap:6px;flex-shrink:0}.release-fish{color:#a7876f}.release-fish.armed{color:#fffaf0;background:#a9684f;border-radius:4px;padding:2px 5px}
+.fish-stage{display:block;padding:0 9px 8px;font-size:9px;letter-spacing:.3px;color:#98a18d}.fish-stage.fry{color:#7f9269}#fish-queue h3{margin:18px 0 9px}.queue-list{display:flex;flex-wrap:wrap;gap:6px}.queue-chip{font-size:10px;color:#7c8a72;background:#e7ebde;border-radius:999px;padding:5px 11px}
 .sound-ctl{display:flex;align-items:center;gap:12px;flex-shrink:0}.sound-ctl input[type=range]{width:110px;min-width:0;flex:none}.sound-ctl select{width:88px}
 /* The live wallpaper shows only the pond: the home screen has its own clock and controls. */
 .wallpaper .ui,.wallpaper .zen-exit,.wallpaper #toast{display:none!important}
