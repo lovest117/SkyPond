@@ -35,13 +35,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: 安装 Android Build Tools 与 Platform 34
-        run: sdkmanager "build-tools;34.0.0" "platforms;android-34"
+      - name: 准备 Android SDK（Build Tools 34 / Platform 34）
+        run: |
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKM="$(ls -d "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | tail -1)"
+          if [ -z "$SDKM" ]; then echo "✗ 没找到 sdkmanager"; exit 1; fi
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "build-tools;34.0.0" "platforms;android-34"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
       - name: 准备 ~/android-build 工具链目录
         run: |
           mkdir -p "$HOME/android-build"
-          ln -sfn "$ANDROID_HOME" "$HOME/android-build/sdk"
+          ln -sfn "$ANDROID_SDK_ROOT" "$HOME/android-build/sdk"
           ln -sfn "$JAVA_HOME" "$HOME/android-build/jdk"
       - name: 构建 Windows 包
         run: bash scripts/build-windows.sh
