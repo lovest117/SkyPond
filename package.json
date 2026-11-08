@@ -1,12 +1,13 @@
 {
   "name": "skypond",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "半亩方塘 · 可交互的锦鲤池塘动态壁纸",
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "check:live": "node scripts/check-live.mjs"
   }
 }

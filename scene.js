@@ -381,9 +381,10 @@
       this.prevW = w; this.prevH = h;
     }
     setLook(weather, night, dt, amounts = {}) {
+      // toneRate 由宿主动态调慢：昼↔夜这种大跨度的天光变化走慢一点，像日头真的落下去。
       const target = lookFor(weather, night, amounts.rainAmount, amounts.snowAmount, amounts.dayPhase);
       if (dt === undefined) { const dir = this.look.shadowDir; this.look = target; this.look.shadowDir = dir; }
-      else lerpLook(this.look, target, 1 - Math.exp(-dt * 1.1));
+      else lerpLook(this.look, target, 1 - Math.exp(-dt * (this.toneRate || 1.1)));
       // Clouds sail right and a little down the screen at a pace that reads as moving without hurrying.
       const span = Math.max(this.w, this.h);
       Object.assign(this.look, { moonOn: this.moonOn !== false, moonDisc: this.moonDisc || [0, 0, 1, 0], causticCell: this.causticCell || 80, cloudWind: [.021 * span, -.007 * span] });

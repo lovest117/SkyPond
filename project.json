@@ -12,19 +12,19 @@
         "value": "sunny",
         "options": [
           {
-            "label": "晴日",
+            "label": "晴",
             "value": "sunny"
           },
           {
-            "label": "多云",
+            "label": "云",
             "value": "cloudy"
           },
           {
-            "label": "细雨",
+            "label": "雨",
             "value": "rain"
           },
           {
-            "label": "落雪",
+            "label": "雪",
             "value": "snow"
           }
         ],
