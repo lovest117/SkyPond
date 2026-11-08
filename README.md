@@ -32,7 +32,9 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip`（Release 已提供），也可直接用源码 | 解压后打开 `index.html`，或导入含 `project.json` 的目录；本地也可 `npm run dev` |
 
-> 当前 Release（v1.1.0）已提供 Windows 与 Android 预编译包。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
+> 当前 Release（v1.1.0）已提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
+
+同一 Release 里还有两个**演示素材**（不是安装包，不能直接安装成锁屏或 AOD 主题）：`SkyPond-wallpaper-demo.mp4`（1080×1920 的动态壁纸实录，10 秒）、`SkyPond-AOD-demo.gif`（熄屏显示观感）。安卓的息屏显示由系统组件自行绘制，第三方应用无法向其中注入内容，这两个文件只是让你先看清楚效果再决定装不装。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
 

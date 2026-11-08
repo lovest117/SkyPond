@@ -12,6 +12,15 @@
 
 校验和见同页 `SHA256SUMS.txt`。
 
+## 演示素材（不是安装包）
+
+| 文件 | 内容 |
+| --- | --- |
+| `SkyPond-wallpaper-demo.mp4` | 1080×1920、10 秒的动态壁纸实录，按本版实际画面重录 |
+| `SkyPond-AOD-demo.gif` | 熄屏显示（AOD）观感，540×1170 |
+
+这两个文件只是让你先看清效果：安卓的息屏显示由系统组件自行绘制，第三方应用无法向其中注入内容，因此它们不能直接安装成锁屏或 AOD 主题。
+
 ## 本版变化
 
 - **改名**：应用名「半亩方塘」、英文名 SkyPond；Windows 数据目录改为 `%LOCALAPPDATA%\SkyPond`，Android 包名 `com.skypond.koipond`，桌面壁纸选择项显示「半亩方塘」。
