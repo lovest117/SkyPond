@@ -26,6 +26,8 @@
   const POND_CAP = 60, QUEUE_CAP = 20;
   // 苗期：喂满 GROW_DAYS 个不同日子后成年。苗期体长是成年体长的 FRY_SCALE 起，按天数线性长到 1。
   const GROW_DAYS = 7, FRY_SCALE = .62, MIN_FRY_SIZE = .25;
+  // 月下模式：鱼游得更慢（NIGHT_SLOW 比例的减速），也更常停在原地歇着。
+  const NIGHT_SLOW = .45;
   function localDayKey(date) { const d = date || new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
   const adultSizeOf = f => clamp(Number(f.adultSize) || Number(f.size) || .9, .45, 1.5);
   function frySize(adultSize, days) { const a = clamp(Number(adultSize) || .9, .45, 1.5), n = clamp(Number(days) || 0, 0, GROW_DAYS); return a * (FRY_SCALE + (1 - FRY_SCALE) * n / GROW_DAYS); }
@@ -126,17 +128,17 @@
       for(let i=0;i<8;i++){const gx=m+r()*(1-2*m),gy=m+r()*(1-2*m),dx=(gx-f.x)*w,dy=(gy-f.y)*h,d=Math.hypot(dx,dy);if(this.obstacles.some(o=>Math.hypot(gx*w-o.x,gy*h-o.y)<o.r+40))continue;const sc=-Math.abs(wrap(Math.atan2(dy,dx)-f.angle))*1.2+Math.min(d,span*.6)/span*2+r()*.6;if(sc>score){score=sc;best={x:gx,y:gy};}}
       f.goal=best||{x:.5,y:.5};f.goalTime=7+r()*12;
     }
-    step(dt,speedFactor=1) {
+    step(dt,speedFactor=1,calm=0) {
       dt=clamp(dt,0,.05);this.time+=dt;const w=this.width,h=this.height;
       for(const p of this.food){p.life-=dt;p.age+=dt;const k=Math.exp(-dt*1.8);p.vx*=k;p.vy*=k;p.x=clamp(p.x+(p.vx+Math.sin(this.time*.35+p.drift)*1.2)*dt,8,w-8);p.y=clamp(p.y+(p.vy+Math.cos(this.time*.29+p.drift*1.3)*1.2)*dt,8,h-8);}
       this.food=this.food.filter(p=>p.life>0&&!p.eaten);
-      const sdt=dt*clamp(speedFactor,.1,3);
+      const sdt=dt*clamp(speedFactor,.1,3)*(1-clamp(calm,0,1)*NIGHT_SLOW);
       const neighbours=this.allFish;
       for(const f of neighbours)wake(f,this.random);
-      for(const f of neighbours)this.swim(f,sdt,neighbours);
+      for(const f of neighbours)this.swim(f,sdt,neighbours,clamp(calm,0,1));
       if(this.food.some(p=>p.eaten))this.food=this.food.filter(p=>!p.eaten);
     }
-    swim(f,dt,neighbours=this.allFish) {
+    swim(f,dt,neighbours=this.allFish,calm=0) {
       const w=this.width,h=this.height,s=f.size*this.scale,L=BODY.length*s,random=this.random,silver=f.species==='silvercarp';
       let x=f.x*w,y=f.y*h;const cos=Math.cos(f.angle),sin=Math.sin(f.angle),mx=x+cos*BODY.nose*s,my=y+sin*BODY.nose*s;
       let food=null,fd=Infinity;const reach=Math.max(w,h)*f.appetite;
@@ -157,8 +159,8 @@
         if(!f.goal||f.goalTime<=0||Math.hypot(f.goal.x*w-x,f.goal.y*h-y)<L*1.3)this.pickGoal(f);
         const a=Math.atan2(f.goal.y*h-y,f.goal.x*w-x)+Math.sin(this.time*.21+f.seed)*.45+Math.sin(this.time*.53+f.seed*1.7)*.2;
         gx=Math.cos(a);gy=Math.sin(a);
-        f.rest=Math.max(0,f.rest-dt);if(f.rest<=0&&random()<dt*.02)f.rest=silver?.6+random()*1.2:2+random()*4;
-        want=f.cruise*L*(f.rest>0?.12:1);
+        f.rest=Math.max(0,f.rest-dt);if(f.rest<=0&&random()<dt*.02*(1+calm*5))f.rest=(silver?.6+random()*1.2:2+random()*4)*(1+calm*.8);
+        want=f.cruise*L*(f.rest>0?.12:1)*(1-calm*.3);
         if(random()<dt*.015)f.depthGoal=silver?.18+random()*.4:.15+random()*.75;
       }
       // Neighbours: keep personal space, sidestep head-on meetings, loosely match heading.
@@ -214,7 +216,7 @@
     const queue=Array.isArray(data.queue)?data.queue.slice(0,QUEUE_CAP).filter(q=>q&&typeof q.name==='string').map(q=>({name:q.name.trim().slice(0,12)||'锦鲤',palette:Number.isInteger(q.palette)?clamp(q.palette,0,PALETTES.length-1):0,adultSize:clamp(Number(q.adultSize)||Number(q.size)||.9,.45,1.5),seed:Number.isFinite(q.seed)?q.seed:0,marks:cleanMarks(q.marks)})):[];
     return {fish,queue,settings:data.settings&&typeof data.settings==='object'?data.settings:{},daily:data.daily};
   }
-  const api={PALETTES,SILVER_CARP,fishPalette,createSilverCarpShoal,BODY,randomSeed,weatherFromCode,clamp,wrap,createFish,POND_CAP,QUEUE_CAP,GROW_DAYS,FRY_SCALE,MIN_FRY_SIZE,localDayKey,frySize,growthStage,growOnFeed,createFry,queueDrain,updateSpine,fishPose,PondSimulation,sanitizeSave};
+  const api={PALETTES,SILVER_CARP,fishPalette,createSilverCarpShoal,BODY,randomSeed,weatherFromCode,clamp,wrap,createFish,POND_CAP,QUEUE_CAP,GROW_DAYS,FRY_SCALE,MIN_FRY_SIZE,NIGHT_SLOW,localDayKey,frySize,growthStage,growOnFeed,createFry,queueDrain,updateSpine,fishPose,PondSimulation,sanitizeSave};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.PondCore=api;
 })(typeof window!=='undefined'?window:globalThis);
