@@ -1,0 +1,40 @@
+name: Deploy Pages
+
+# push 到 main 就自动构建并发布到 Cloudflare Pages 项目 skypond。
+# 需要仓库 Settings → Secrets and variables → Actions 里配好：
+#   CLOUDFLARE_API_TOKEN    Cloudflare API Token（权限：Account → Cloudflare Pages → Edit）
+#   CLOUDFLARE_ACCOUNT_ID   Cloudflare 账号 ID
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # 只在 SkyPond 主仓库跑；推到 fishwallpaper 镜像仓库时跳过，避免因缺 secret 报红
+    if: github.repository == 'lovest117/SkyPond'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 单元测试
+        run: npm test
+      - name: 构建静态产物（产出 dist/，含 _headers）
+        run: npm run build
+      - name: 发布到 Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=skypond --branch=main
+      - name: 输出本次部署地址
+        run: echo "已发布：${{ steps.deploy.outputs.deployment-url }}"
