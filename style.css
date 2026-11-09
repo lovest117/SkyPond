@@ -11,3 +11,4 @@
 .sound-ctl{display:flex;align-items:center;gap:12px;flex-shrink:0}.sound-ctl input[type=range]{width:110px;min-width:0;flex:none}.sound-ctl select{width:88px}
 /* The live wallpaper shows only the pond: the home screen has its own clock and controls. */
 .wallpaper .ui,.wallpaper .zen-exit,.wallpaper #toast{display:none!important}
+/* 时钟：分钟跳变时那一位轻轻翻一下，其余时间完全静止 */#clock{display:inline-flex;align-items:baseline;perspective:200px}.fc-d{display:inline-block;transform-origin:50% 58%;will-change:transform}.fc-sep{display:inline-block;opacity:.5;font-weight:200}.fc-flip{animation:fcFlip .34s cubic-bezier(.32,.06,.3,1) both}body.reduced-motion .fc-d{animation:none !important}@keyframes fcFlip{0%{transform:rotateX(0);opacity:1}42%{transform:rotateX(-80deg) scaleY(.92);opacity:.62}50%{transform:rotateX(84deg) scaleY(.92);opacity:.62}100%{transform:rotateX(0);opacity:1}}

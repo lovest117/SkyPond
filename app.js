@@ -248,10 +248,38 @@ function moodLine(){
   const lines={sunny:'水光潋滟晴方好',cloudy:'闲云潭影日悠悠',rain:'细雨鱼儿出',snow:'晚来天欲雪'};
   return lines[settings.weather]||lines.sunny;
 }
-function clockTick(){const date=new Date();$('#clock').textContent=date.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});$('#clock').dateTime=date.toISOString();$('#calendar').textContent=date.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});$('#lunar').textContent=lunarText(date);updateMeta();}
+// 时钟：只在「分钟」或「跨天」变化时才动 DOM；日期与农历按天缓存，不再每秒重算。
+const clockDigits=[...document.querySelectorAll('#clock .fc-d')];
+let clockMinute='',clockDay='';
+function setClockDigits(hh,mm,animate){
+  const next=[hh[0],hh[1],mm[0],mm[1]];
+  next.forEach((ch,i)=>{
+    const el=clockDigits[i];if(!el)return;
+    if(!animate||el.textContent===ch||document.body.classList.contains('reduced-motion')){el.textContent=ch;return;}
+    el.classList.remove('fc-flip');void el.offsetWidth;el.classList.add('fc-flip');
+    setTimeout(()=>{el.textContent=ch;},145);          // 翻到 90°（字形侧立）时才换字，看不出接缝
+    setTimeout(()=>el.classList.remove('fc-flip'),360); // 按固定时长收尾，不依赖 animationend
+  });
+}
+function clockTick(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0'),mm=String(now.getMinutes()).padStart(2,'0');
+  const day=`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`,minute=`${hh}:${mm}`;
+  if(minute===clockMinute)return;                      // 同一分钟内什么都不做
+  setClockDigits(hh,mm,Boolean(clockMinute));           // 首帧直接落字，之后才翻
+  clockMinute=minute;
+  $('#clock').dateTime=now.toISOString();
+  if(day!==clockDay){
+    clockDay=day;
+    $('#calendar').textContent=now.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+    $('#lunar').textContent=lunarText(now);
+    updateMeta();                                       // 跨天顺带清「今日投喂」
+  }
+}
 // 池面此刻的「模拟四时」：季节、昼夜/月相、天象，不含真实日期时间。
 function renderFourState(){const season=(SEASONS.find(([v])=>v===settings.background)||SEASONS[0])[1];const phase=settings.night?`夜 · ${PondScene.MOON_LABELS[settings.moonPhase]||'满月'}`:`昼 · ${(DAY_LABELS.find(([v])=>v===settings.dayPhase)||['noon','晌午'])[1]}`;const weather={sunny:'晴空',cloudy:'多云',rain:'下雨',snow:'落雪'}[settings.weather]||'晴空';const text=`${season} · ${phase} · ${weather}`;const el=$('#four-state-text');if(el)el.textContent=text;const btn=$('#four-state');if(btn)btn.setAttribute('aria-label',`当前四时：${text}，打开四时设置`);return text;}
-clockTick();setInterval(clockTick,1000);applyWeather();
+function tickClockAligned(){clockTick();setTimeout(tickClockAligned,1012-(Date.now()%1000));}   // 每次重新对齐到整秒，长时间挂机不漂
+tickClockAligned();document.addEventListener('visibilitychange',()=>{if(!document.hidden)clockTick();});applyWeather();
 const dialog=$('#panel');
 document.querySelectorAll('[data-panel]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.panel)));
 $('.close-panel').addEventListener('click',()=>dialog.close());
