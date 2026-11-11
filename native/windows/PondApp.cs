@@ -2,6 +2,7 @@
 // interactive window. Every save one pond page makes is passed to the others, so they stay in step.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -63,15 +64,42 @@ namespace SkyPond
 
         private async Task Start()
         {
+            // Always leave a readable record first: if this machine cannot put a window into the desktop, the log has
+            // to say what the desktop looked like, even when the person cannot get the interactive window open.
+            Diagnostics.Write("===== 启动 =====\r\n" + Diagnostics.EnvironmentReport());
+
+            if (Native.IsElevated())
+            {
+                MessageBox.Show("半亩方塘要以普通权限运行。\r\n\r\n当前是管理员权限，Windows 不允许把壁纸窗口挂到资源管理器的桌面层，" +
+                    "池塘会变成一个盖住桌面的空白窗口。\r\n\r\n请关掉后直接双击「0-点我启动.bat」；若右键菜单里勾了" +
+                    "「以管理员身份运行」，取消它。", "半亩方塘", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Diagnostics.Write("已拒绝启动：当前进程是管理员权限");
+                ExitThread();
+                return;
+            }
+
+            if (!File.Exists(Path.Combine(PondPage.WebFolder, "index.html")))
+            {
+                MessageBox.Show("文件夹里缺少 web 子目录，池塘的网页没有跟着一起解压。\r\n\r\n" +
+                    "请把整个压缩包解压成一个文件夹，再运行里面的「0-点我启动.bat」；不要把 exe 单独拖出来。",
+                    "半亩方塘", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Diagnostics.Write("已拒绝启动：缺少 web\\index.html");
+                try { Process.Start(new ProcessStartInfo("explorer.exe", "\"" + AppDomain.CurrentDomain.BaseDirectory + "\"") { UseShellExecute = true }); } catch (Exception) { }
+                ExitThread();
+                return;
+            }
+
             string runtime = null;
             try { runtime = CoreWebView2Environment.GetAvailableBrowserVersionString(); } catch (WebView2RuntimeNotFoundException) { }
             if (string.IsNullOrEmpty(runtime))
             {
+                Diagnostics.Write("WebView2 运行时不可用");
                 if (MessageBox.Show("半亩方塘需要 Microsoft Edge WebView2 运行时（Windows 11 自带，Windows 10 多数已通过更新安装）。\n\n现在打开下载页面吗？", "半亩方塘", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                     PondPage.OpenInBrowser("https://developer.microsoft.com/microsoft-edge/webview2/");
                 ExitThread();
                 return;
             }
+            Diagnostics.Write("WebView2：" + runtime);
             string data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkyPond", "WebView2");
             // A wallpaper page is clicked through to the desktop's icon layer (see TapIfDesktop), so it never sees a real
             // user gesture; Chromium's autoplay policy would then keep its AudioContext suspended forever and the desktop
@@ -90,12 +118,24 @@ namespace SkyPond
             // After an Explorer restart these windows are already gone with the old desktop; just let them go.
             foreach (var w in walls) { try { w.Close(); w.Dispose(); } catch (Exception) { } }
             walls.Clear();
-            if (!Desktop.Find()) return;
+            if (!Desktop.Find())
+            {
+                Diagnostics.Write("找不到桌面层，未创建壁纸窗口");
+                tray.ShowBalloonTip(8000, "半亩方塘", "没找到资源管理器的桌面层，池塘没能铺上去。右键锦鲤图标 → 诊断日志…，把日志发回来。", ToolTipIcon.Warning);
+                return;
+            }
+            Diagnostics.Write("桌面层：\r\n" + Desktop.Report);
+            int failed = 0;
             foreach (var screen in Screen.AllScreens)
             {
                 var wall = new WallpaperForm(screen);
-                walls.Add(wall);
-                await wall.Start(env, OnSave, OnProcessFailed);
+                if (await wall.Start(env, OnSave, OnProcessFailed)) walls.Add(wall);
+                else { failed++; try { wall.Dispose(); } catch (Exception) { } }
+            }
+            if (failed > 0)
+            {
+                Diagnostics.Write($"有 {failed} 块屏幕未能挂载（共 {Screen.AllScreens.Length} 块）");
+                tray.ShowBalloonTip(8000, "半亩方塘", "有屏幕没能铺上池塘。右键锦鲤图标 → 诊断日志…，可以复制或上传日志。", ToolTipIcon.Warning);
             }
             UpdateVisibility();
         }
@@ -261,6 +301,7 @@ namespace SkyPond
             soundItem = new ToolStripMenuItem("声音", null, (s, e) => { soundOn = !soundOn; Command(soundOn ? "{soundOn:true}" : "{soundOn:false}"); });
             menu.Items.Add(soundItem);
             menu.Items.Add("重载桌面壁纸", null, (s, e) => Rebuild(0));
+            menu.Items.Add("诊断日志…", null, (s, e) => new DiagnosticsForm().ShowDialog());
             var startup = new ToolStripMenuItem("开机时启动", null, (s, e) => SetStartup(!IsStartup()));
             menu.Items.Add(startup);
             menu.Items.Add(new ToolStripSeparator());

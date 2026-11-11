@@ -68,9 +68,11 @@ cat > "$OUT/README.txt" <<'TXT'
   切换天气与月下观鱼、暂停壁纸动画、重载、开机时启动、退出。双击图标也可打开交互窗口。
 · 被最大化或全屏的窗口挡住、或锁屏时，这块屏幕的池塘自动停止绘制，不占用资源。
 · 退出后桌面恢复为原来的系统壁纸。
+· 没能铺上池塘时不会留下盖住桌面的窗口；右键锦鲤图标 →「诊断日志…」可以复制或上传日志。
+   必须以普通权限运行（不要用“以管理员身份运行”），并且要完整解压整个文件夹（web\ 不能少）。
 
 要求：Windows 10 / 11，Microsoft Edge WebView2 运行时（Windows 11 自带；Windows 10 若缺少，
-程序会提示并打开下载页）。数据保存在 %LOCALAPPDATA%\SkyPond。
+程序会提示并打开下载页）。数据与诊断日志保存在 %LOCALAPPDATA%\SkyPond。
 TXT
 # Notepad reads UTF-8 without a BOM fine on Windows 10 1903+, but a BOM keeps older builds from guessing wrong.
 printf '\xEF\xBB\xBF' | cat - "$OUT/README.txt" > "$WORK/readme" && mv "$WORK/readme" "$OUT/README.txt"

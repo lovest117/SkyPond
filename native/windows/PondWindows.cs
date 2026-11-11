@@ -101,13 +101,26 @@ namespace SkyPond
         // Never take focus from whatever the person is using.
         protected override bool ShowWithoutActivation => true;
 
-        public async Task Start(CoreWebView2Environment env, Action<WebView2, string> onSave, Action<WebView2, CoreWebView2ProcessFailedKind> onProcessFailed)
+        public async Task<bool> Start(CoreWebView2Environment env, Action<WebView2, string> onSave, Action<WebView2, CoreWebView2ProcessFailedKind> onProcessFailed)
         {
             CreateHandle();
-            // Once inside the desktop the window's position is relative to its new parent; keep WinForms in agreement.
-            Bounds = Desktop.Attach(Handle, Screen.Bounds);
+            try
+            {
+                // Once inside the desktop the window's position is relative to its new parent; keep WinForms in agreement.
+                Bounds = Desktop.Attach(Handle, Screen.Bounds);
+            }
+            catch (Exception ex)
+            {
+                // A window that could not be parented would sit as a plain full-screen form over the desktop icons.
+                // Never show it: keep the tray icon and tell the person through the log and a balloon instead.
+                Diagnostics.Write("壁纸挂载失败：屏幕 " + Screen.DeviceName, ex);
+                Hide();
+                return false;
+            }
             Show();
             View = await PondPage.Create(this, env, "wallpaper", onSave, onProcessFailed);
+            Diagnostics.Write($"壁纸已挂载：屏幕 {Screen.DeviceName}，宿主 0x{Desktop.Host:X}，区域 {Bounds}");
+            return true;
         }
 
         /// <summary>Stops drawing while nobody can see it (a maximised app over it, the screen locked), and back.</summary>

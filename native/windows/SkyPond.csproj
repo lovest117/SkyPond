@@ -16,7 +16,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <!-- 版本号唯一来源是仓库根目录的 version.json：scripts/build-windows.sh 会以 -p:Version 覆盖这里；
          这一行只是没走脚本时的兜底，改版本请改 version.json（node scripts/version.mjs check 会校验）。 -->
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <Product>半亩方塘</Product>
     <AssemblyTitle>半亩方塘 · 锦鲤池塘动态壁纸</AssemblyTitle>
     <Copyright>半亩方塘 · 基于「碧池观鱼」二次创作</Copyright>

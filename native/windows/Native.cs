@@ -41,6 +41,11 @@ namespace SkyPond
         [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
         [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool IsZoomed(IntPtr hwnd);
         [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool IsWindowVisible(IntPtr hwnd);
+        [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool IsWindow(IntPtr hwnd);
+        [DllImport("kernel32.dll")] public static extern IntPtr GetCurrentProcess();
+        [DllImport("kernel32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool CloseHandle(IntPtr handle);
+        [DllImport("advapi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool OpenProcessToken(IntPtr process, uint access, out IntPtr token);
+        [DllImport("advapi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool GetTokenInformation(IntPtr token, int infoClass, out int info, int infoLength, out int returned);
         [DllImport("user32.dll")] public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
         [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] public static extern bool GetMonitorInfo(IntPtr monitor, ref MONITORINFO info);
         [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr hwnd);
@@ -56,6 +61,24 @@ namespace SkyPond
             var sb = new StringBuilder(64);
             GetClassName(hwnd, sb, sb.Capacity);
             return sb.ToString();
+        }
+
+        /// <summary>True when this process runs with an elevated (administrator) token. Explorer does not, and a child
+        /// window cannot be parented across that boundary: the wallpaper would stay a plain top-level window over the
+        /// desktop, hiding the icons.</summary>
+        public static bool IsElevated()
+        {
+            IntPtr token = IntPtr.Zero;
+            try
+            {
+                // TOKEN_QUERY = 0x0008, TokenElevation = 20, TOKEN_ELEVATION = one DWORD
+                if (!OpenProcessToken(GetCurrentProcess(), 0x0008, out token)) return false;
+                int elevation, returned;
+                if (!GetTokenInformation(token, 20, out elevation, sizeof(int), out returned)) return false;
+                return elevation != 0;
+            }
+            catch (Exception) { return false; }
+            finally { if (token != IntPtr.Zero) CloseHandle(token); }
         }
 
         /// <summary>Scale from CSS px to device px for a window (1.0 at 96 dpi); falls back to 1 before Windows 10 1607.</summary>
