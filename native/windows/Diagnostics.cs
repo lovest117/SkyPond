@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
@@ -44,10 +45,13 @@ namespace SkyPond
             string s = text;
             string profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             if (!string.IsNullOrEmpty(profile)) s = s.Replace(profile, "%USERPROFILE%");
+            // Only as a path component: a one-letter user name must not eat digits out of version numbers.
             string user = Environment.UserName;
-            if (!string.IsNullOrEmpty(user)) s = s.Replace(user, "%USERNAME%");
+            if (!string.IsNullOrEmpty(user))
+                s = Regex.Replace(s, @"(?i)\\Users\\" + Regex.Escape(user) + @"\\", @"\Users\%USERNAME%\");
             string machine = Environment.MachineName;
-            if (!string.IsNullOrEmpty(machine)) s = s.Replace(machine, "%COMPUTERNAME%");
+            if (!string.IsNullOrEmpty(machine) && machine.Length >= 3)
+                s = Regex.Replace(s, @"\b" + Regex.Escape(machine) + @"\b", "%COMPUTERNAME%", RegexOptions.IgnoreCase);
             return s;
         }
 

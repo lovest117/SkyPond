@@ -18,6 +18,8 @@ namespace SkyPond
 
         public const int WH_MOUSE_LL = 14, WM_LBUTTONDOWN = 0x0201, WM_LBUTTONUP = 0x0202;
         public const int GWL_STYLE = -16, GWL_EXSTYLE = -20;
+        public const int WS_CHILD = 0x40000000;
+        public const int WS_POPUP = unchecked((int)0x80000000);
         public const int WS_EX_LAYERED = 0x80000, WS_EX_TOOLWINDOW = 0x80, WS_EX_NOACTIVATE = 0x8000000;
         public const uint SWP_NOACTIVATE = 0x10, SWP_SHOWWINDOW = 0x40, SWP_NOZORDER = 0x4;
         public const uint SMTO_NORMAL = 0, LWA_ALPHA = 2, MONITOR_DEFAULTTONEAREST = 2;

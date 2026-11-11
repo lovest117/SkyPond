@@ -126,6 +126,12 @@ namespace SkyPond
             Native.SetWindowLongPtr(window, Native.GWL_EXSTYLE, new IntPtr(ex));
             if (Layered24H2) Native.SetLayeredWindowAttributes(window, 0, 255, Native.LWA_ALPHA);
 
+            // SetParent leaves the styles alone, and a window that is not WS_CHILD does not report its parent through
+            // GetParent: it would look like a failure even when the window is now inside the desktop. Declare it a child.
+            long style = Native.GetWindowLongPtr(window, Native.GWL_STYLE).ToInt64();
+            style = (style & ~Native.WS_POPUP) | Native.WS_CHILD;
+            Native.SetWindowLongPtr(window, Native.GWL_STYLE, new IntPtr(style));
+
             int error = 0;
             Native.SetParent(window, Host);
             if (Native.GetParent(window) != Host)
