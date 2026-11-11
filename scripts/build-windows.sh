@@ -73,6 +73,8 @@ cat > "$OUT/README.txt" <<'TXT'
 
 要求：Windows 10 / 11，Microsoft Edge WebView2 运行时（Windows 11 自带；Windows 10 若缺少，
 程序会提示并打开下载页）。数据与诊断日志保存在 %LOCALAPPDATA%\SkyPond。
+联网：只有勾选「此刻此地」或手动查询城市时，才把城市名或坐标发给 Open-Meteo 取天气和日出日落；
+不登录、不统计、不上传池塘内容。不联网也能正常用，只是没有实时天气。
 TXT
 # Notepad reads UTF-8 without a BOM fine on Windows 10 1903+, but a BOM keeps older builds from guessing wrong.
 printf '\xEF\xBB\xBF' | cat - "$OUT/README.txt" > "$WORK/readme" && mv "$WORK/readme" "$OUT/README.txt"
