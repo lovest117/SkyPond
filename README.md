@@ -34,7 +34,7 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip`（Release 已提供），也可直接用源码 | 解压后打开 `index.html`，或导入含 `project.json` 的目录；本地也可 `npm run dev` |
 
-> 当前 Release（v1.2.0）提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
+> 当前 Release（v1.2.3）提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
 
 Windows 包内附了给不熟电脑的人看的两份东西：`0-点我启动.bat`（双击即开；万一只把 bat 拖出来、没解压整个文件夹，它会提示「整个文件夹一起解压」）和 `README.txt`（三步装好、用法、卸载与数据位置）。脚本只负责启动和提示，不会替你去动系统的「已保护你的电脑」拦截——那是绕过安全提示，交给用户自己判断；想先核验文件，用 Release 里的 `SHA256SUMS.txt`。
 

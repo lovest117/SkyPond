@@ -1,11 +1,11 @@
 {
-  "version": "1.2.2",
+  "version": "1.2.3",
   "android": {
-    "versionName": "1.2.2",
-    "versionCode": 8
+    "versionName": "1.2.3",
+    "versionCode": 9
   },
   "windows": {
-    "fileVersion": "1.2.2.0",
-    "manifestVersion": "1.2.2.0"
+    "fileVersion": "1.2.3.0",
+    "manifestVersion": "1.2.3.0"
   }
 }
