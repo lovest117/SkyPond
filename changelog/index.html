@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>更新记录 · 半亩方塘</title>
+<meta name="description" content="半亩方塘各版本的更新记录。" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/pages.css" />
+</head>
+<body>
+<div class="wrap">
+  <nav class="top">
+    <a class="brand" href="/">半亩方塘</a>
+    <div class="links"><a href="/about/">关于</a><a href="/download/">下载</a><a href="/privacy/">隐私</a><a href="/changelog/">更新</a></div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">CHANGELOG</div>
+    <h1>更新记录</h1>
+    <p class="lead">只列最近几版；完整的说明与校验和都在 GitHub Release 里。</p>
+  </header>
+
+  <section>
+    <div class="timeline">
+      <div class="item">
+        <div class="when">v1.2.3 · 2026-11-11</div>
+        <h3>Web 首访减负与两处补丁</h3>
+        <p>内嵌底图改为只在直接双击 <code>index.html</code> 时加载，网页与 Windows 首访少下一次约 323 KB 的数据；城市名与「此刻此地」摘要按纯文本转义；README 补上 Open-Meteo 的隐私口径。画面与交互无变化。</p>
+        <a href="https://github.com/lovest117/SkyPond/releases/tag/v1.2.3" target="_blank" rel="noopener">查看 v1.2.3</a>
+      </div>
+      <div class="item">
+        <div class="when">v1.2.2</div>
+        <h3>桌面挂载更可靠，加诊断日志</h3>
+        <p>挂载失败时不再显示盖住桌面的空白窗口；桌面层探测更严格；以管理员权限启动会提示并退出。新增 <code>error.log</code> 与托盘「诊断日志…」，支持脱敏后一键上传。</p>
+        <a href="https://github.com/lovest117/SkyPond/releases/tag/v1.2.2" target="_blank" rel="noopener">查看 v1.2.2</a>
+      </div>
+      <div class="item">
+        <div class="when">v1.2.1</div>
+        <h3>四时面板、昼夜过渡与顶部四时栏</h3>
+        <p>顶栏移到屏幕正上方，天气与设置收进四时面板；昼夜、时段与月相切换走 4–5 秒天光过渡；天象定为单字「晴 / 云 / 雨 / 雪」；注脚只留一句不超过 10 字的诗。</p>
+        <a href="https://github.com/lovest117/SkyPond/releases/tag/v1.2.1" target="_blank" rel="noopener">查看 v1.2.1</a>
+      </div>
+    </div>
+    <p><a href="https://github.com/lovest117/SkyPond/releases" target="_blank" rel="noopener">全部版本与 SHA256SUMS</a></p>
+  </section>
+
+  <footer>
+    <span>半亩方塘 · 基于「碧池观鱼」二次创作</span>
+    <span><a href="https://github.com/lovest117/SkyPond" target="_blank" rel="noopener">GitHub</a> · <a href="/about/">关于</a></span>
+  </footer>
+</div>
+</body>
+</html>

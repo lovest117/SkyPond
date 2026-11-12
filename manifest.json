@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "半亩方塘 · Koi Pond",
+  "short_name": "半亩方塘",
+  "description": "一方可以投喂锦鲤、听雨观鱼的池塘。四时流转，昼夜与月相都在，安静地待在屏幕一角。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#738c7c",
+  "background_color": "#f3f1ea",
+  "icons": [
+    { "src": "/assets/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>隐私说明 · 半亩方塘</title>
+<meta name="description" content="半亩方塘会保存什么、联网时发送什么，以及如何删除本地数据。" />
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="/pages.css" />
+</head>
+<body>
+<div class="wrap">
+  <nav class="top">
+    <a class="brand" href="/">半亩方塘</a>
+    <div class="links"><a href="/about/">关于</a><a href="/download/">下载</a><a href="/privacy/">隐私</a><a href="/changelog/">更新</a></div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow">PRIVACY</div>
+    <h1>隐私说明</h1>
+    <p class="lead">这方池塘默认不联网、不需要账号。下面把会保存什么、什么时候联网、数据放在哪里，逐项写清楚。</p>
+  </header>
+
+  <section>
+    <h2>保存在本地的东西</h2>
+    <ul>
+      <li>池塘设置、锦鲤的名字与食量、投喂记录、诗句偏好等，保存在浏览器的 <code>localStorage</code>；Windows 版保存在 WebView2 的本地用户数据目录。</li>
+      <li>Windows 版的诊断日志在 <code>%LOCALAPPDATA%\SkyPond\error.log</code>，只记录系统版本、WebView2 版本、屏幕与桌面挂载结果，写入前会去掉用户名、电脑名和用户目录。</li>
+      <li>这些数据不上传云端，也不做跨设备同步。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>什么时候联网</h2>
+    <p>只有开启「此刻此地」、或手动查询城市时才联网，使用 Open-Meteo 的公开接口：</p>
+    <ul>
+      <li>城市查询：把输入的城市名发给 <code>geocoding-api.open-meteo.com</code>，换回经纬度。</li>
+      <li>天气与日出日落：把所选城市的经纬度发给 <code>api.open-meteo.com</code>。</li>
+      <li>不发送设备标识、账号信息或池塘内容，不附带统计参数；请求失败就保留上一次的四时或退回手动。</li>
+    </ul>
+    <p>不联网时，除了实时天气与「此刻此地」，其余功能照常。</p>
+  </section>
+
+  <section>
+    <h2>诊断日志上传</h2>
+    <p>只有你在托盘菜单里主动点「诊断日志… → 上传」时，才会把脱敏后的日志发到 dpaste（匿名粘贴服务，保留 30 天，不需要账号）。不会自动上传，也不会随崩溃自动发送。上传前可以在窗口里先看全文。</p>
+  </section>
+
+  <section>
+    <h2>网站本身</h2>
+    <p>本站是 Cloudflare Pages 上的静态页面，没有账号系统、广告、第三方统计脚本或社交组件。托管平台可能按其基础设施策略保留基础访问日志，这部分不由本项目收集或使用。</p>
+  </section>
+
+  <section>
+    <h2>怎么删除</h2>
+    <ul>
+      <li>浏览器版：在浏览器设置里清除本站的站点数据，或删除主屏幕上的半亩方塘。</li>
+      <li>Windows 版：删除 <code>%LOCALAPPDATA%\SkyPond</code> 即可清掉设置与日志；卸载程序文件夹不会自动删除这份数据。</li>
+      <li>Android 版：在系统设置里清除应用数据，或卸载应用。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>联系</h2>
+    <p>有问题或想确认某处实现，可以在 <a href="https://github.com/lovest117/SkyPond/issues" target="_blank" rel="noopener">GitHub Issues</a> 里提。</p>
+  </section>
+
+  <footer>
+    <span>半亩方塘 · 基于「碧池观鱼」二次创作</span>
+    <span><a href="https://github.com/lovest117/SkyPond" target="_blank" rel="noopener">GitHub</a> · <a href="/about/">关于</a></span>
+  </footer>
+</div>
+</body>
+</html>

@@ -31,7 +31,7 @@
   </ItemGroup>
   <!-- The pond itself: the same web files as every other build, served to WebView2 from a web\ folder. -->
   <ItemGroup>
-    <Content Include="..\..\index.html;..\..\style.css;..\..\core.js;..\..\art.js;..\..\gl.js;..\..\scene.js;..\..\now.js;..\..\audio.js;..\..\app.js" Link="web\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\assets\pond.webp;..\..\assets\pond-spring.webp;..\..\assets\pond-summer.webp;..\..\assets\pond-autumn.webp;..\..\assets\pond-winter.webp;..\..\assets\pond-data.js;..\..\assets\favicon.svg" Link="web\assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\index.html;..\..\style.css;..\..\core.js;..\..\art.js;..\..\gl.js;..\..\scene.js;..\..\now.js;..\..\audio.js;..\..\app.js;..\..\manifest.json" Link="web\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\assets\pond.webp;..\..\assets\pond-spring.webp;..\..\assets\pond-summer.webp;..\..\assets\pond-autumn.webp;..\..\assets\pond-winter.webp;..\..\assets\pond-data.js;..\..\assets\favicon.svg;..\..\assets\app-icon-192.png;..\..\assets\app-icon-512.png" Link="web\assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

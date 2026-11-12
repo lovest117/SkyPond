@@ -33,6 +33,7 @@ Windows · Android 动态壁纸，也能在浏览器和 Wallpaper Engine 里运�
 | Windows 10 / 11 | `SkyPond-<版本>-Windows.zip`（Release 已提供） | 解压整个文件夹，双击包内的 `0-点我启动.bat`（或直接双击 `SkyPond.exe`）；通知区域锦鲤图标控制。若提示“已保护你的电脑”，点“更多信息 → 仍要运行” |
 | Android 7.0+ | `SkyPond-<版本>-Android.apk`（Release 已提供） | 传到手机安装，允许「安装未知来源应用」；也可运行 `scripts/build-android-linux.sh` 自行构建，详见下方「安卓动态壁纸（APK）」 |
 | 浏览器 / Wallpaper Engine | `SkyPond-<版本>-Web.zip`（Release 已提供），也可直接用源码 | 解压后打开 `index.html`，或导入含 `project.json` 的目录；本地也可 `npm run dev` |
+| 在线站点 | [skypond.pages.dev](https://skypond.pages.dev/) | 打开即玩；支持“添加到主屏幕”，第二次打开可离线显示。产品介绍、下载、隐私与更新记录在 `/about/`、`/download/`、`/privacy/`、`/changelog/` |
 
 > 当前 Release（v1.2.3）提供 Windows / Android / Web 三个平台的预编译包与 `SHA256SUMS.txt` 校验和。Android 原生壳已完成品牌改名（包名 `com.skypond.koipond`、应用名「半亩方塘」）并打包四季背景图。
 
@@ -41,6 +42,10 @@ Windows 包内附了给不熟电脑的人看的两份东西：`0-点我启动.ba
 之前的两个演示素材（`SkyPond-wallpaper-demo.mp4`、`SkyPond-AOD-demo.gif`）拍的是旧界面，v1.2.0 里暂时撤下，按新的四时面板与此刻此地重录后再补到 Release；想看旧观感可以去 [v1.1.0](https://github.com/lovest117/SkyPond/releases/tag/v1.1.0)。
 
 iPhone：iOS 不允许第三方应用提供动态壁纸，因此没有 iPhone 版本；可以在 Safari 中打开网页版全屏观赏。
+
+手机扫码打开网页版：
+
+![半亩方塘网页版二维码](assets/qr-site.svg)
 
 > 本作品基于开源项目「碧池观鱼」（[moli-xia/fishwallpaper](https://github.com/moli-xia/fishwallpaper)）二次创作：沿用其代码与素材，做了改名、平台调整与功能增补，非原作者官方版本。上游未声明开源许可证，本仓库不另外授予许可，引用或分发前请先联系原作者。
 

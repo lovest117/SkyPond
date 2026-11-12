@@ -18,9 +18,9 @@ cd "$ROOT/android"
 
 # Package the current pond, never a stale copy: assets/ is rebuilt from the web sources every time.
 rm -rf assets && mkdir -p assets/assets
-for f in index.html app.js core.js art.js gl.js scene.js now.js audio.js style.css; do cp "$ROOT/$f" assets/; done
+for f in index.html app.js core.js art.js gl.js scene.js now.js audio.js style.css manifest.json; do cp "$ROOT/$f" assets/; done
 for img in pond.webp pond-spring.webp pond-summer.webp pond-autumn.webp pond-winter.webp; do cp "$ROOT/assets/$img" assets/assets/; done
-cp "$ROOT/assets/pond-data.js" "$ROOT/assets/favicon.svg" assets/assets/
+cp "$ROOT/assets/pond-data.js" "$ROOT/assets/favicon.svg" "$ROOT/assets/app-icon-192.png" "$ROOT/assets/app-icon-512.png" assets/assets/
 
 # Keep the signing key between builds, so a new APK installs over the old one without losing the pond.
 [[ -f build/skypond.keystore ]] && cp build/skypond.keystore "$ROOT/android/.skypond.keystore.keep"
